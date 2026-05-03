@@ -1,0 +1,12 @@
+{
+  "ID": "cecb82f3-6bde-4a1d-b5c6-b4bd3b71d1f1",
+  "ActionKeyword": "dc",
+  "Name": "Commander Hotlist",
+  "Description": "Lists directory hotlist entries from Double/Total Commander",
+  "Author": "Dani7377",
+  "Version": "1.0.0",
+  "Language": "csharp",
+  "Website": "https://github.com/Dani7377/Flow.Launcher.Plugin.CommanderHotlist",
+  "ExecuteFileName": "Flow.Launcher.Plugin.CommanderHotlist.dll",
+  "IcoPath": "Images\\app.png"
+}
