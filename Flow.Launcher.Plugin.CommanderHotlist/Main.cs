@@ -8,6 +8,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
     {
         private PluginInitContext _context = null!;
         private Settings _settings = null!;
+        private List<ToolConfig>? activeTools;
 
         public void Init(PluginInitContext context)
         {
@@ -28,7 +29,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             var allTools = _settings.GetTools().ToList();
 
             // Determine which tools are enabled and have a valid settings file
-            var activeTools = allTools
+            activeTools = allTools
                 .Where(t => t.IsEnabled && File.Exists(t.SettingsFilePath))
                 .ToList();
 
@@ -72,7 +73,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
 
         public List<Result> LoadContextMenus(Result selectedResult)
         {
-            return new List<Result>
+            List<Result> r = new List<Result>()
             {
                 new Result
                 {
@@ -98,6 +99,50 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                     }
                 }
             };
+
+            // Double Commander, only if it's enabled in settings
+            ToolConfig? doubleCommanderToolConfig = activeTools.FirstOrDefault(t => t.ToolType == ToolType.DoubleCommander);
+            if (doubleCommanderToolConfig != null)
+            {
+                r.Add(new Result
+                {
+                    Title = $"Open in {doubleCommanderToolConfig.DisplayName}",
+                    SubTitle = $"Open the folder in {doubleCommanderToolConfig.DisplayName}",
+                    IcoPath = "Images\\app.png",
+                    Action = _ =>
+                    {
+                        if (!CommanderLauncher.Launch(selectedResult.SubTitle, doubleCommanderToolConfig, _context))
+                        {
+                            _context.API.ShowMsgError("Error while opening the folder", $"Error while opening the folder in {doubleCommanderToolConfig.DisplayName}");
+                            return false;
+                        }
+                        return true;
+                    }
+                });
+            }
+
+            // Total Commander, only if it's enabled in settings
+            ToolConfig? totalCommanderToolConfig = activeTools.FirstOrDefault(t => t.ToolType == ToolType.TotalCommander);
+            if(totalCommanderToolConfig != null)
+            {
+                r.Add(new Result
+                {
+                    Title = $"Open in {totalCommanderToolConfig.DisplayName}",
+                    SubTitle = $"Open the folder in {totalCommanderToolConfig.DisplayName}",
+                    IcoPath = "Images\\app.png",
+                    Action = _ =>
+                    {
+                        if (!CommanderLauncher.Launch(selectedResult.SubTitle, totalCommanderToolConfig, _context))
+                        {
+                            _context.API.ShowMsgError("Error while opening the folder", $"Error while opening the folder in {totalCommanderToolConfig.DisplayName}");
+                            return false;
+                        }
+                        return true;
+                    }
+                });
+            }
+
+            return r;
         }
 
         /// <summary>
