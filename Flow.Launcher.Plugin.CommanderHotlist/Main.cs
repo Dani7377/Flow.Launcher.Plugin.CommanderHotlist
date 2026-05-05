@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Flow.Launcher.Plugin.CommanderHotlist
 {
-    public class Main : IPlugin, ISettingProvider
+    public class Main : IPlugin, ISettingProvider, IContextMenu
     {
         private PluginInitContext _context = null!;
         private Settings _settings = null!;
@@ -12,6 +13,11 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         {
             _context = context;
             _settings = context.API.LoadSettingJsonStorage<Settings>();
+        }
+
+        public Control CreateSettingPanel()
+        {
+            return new SettingsControl(_context, _settings);
         }
 
         public List<Result> Query(Query query)
@@ -64,6 +70,55 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             return results;
         }
 
+        public List<Result> LoadContextMenus(Result selectedResult)
+        {
+            return new List<Result>
+            {
+                new Result
+                {
+                    Title = "Copy folder's name",
+                    SubTitle = "Copy the name of the folder to clipboard",
+                    IcoPath = "Images\\app.png",
+                    Action = _ =>
+                    {
+                        bool success = Copy(selectedResult.SubTitle, true);
+                        return success;
+                    }
+                },
+
+                new Result
+                {
+                    Title = "Copy folder's path",
+                    SubTitle = "Copy the full path of the folder to clipboard",
+                    IcoPath = "Images\\app.png",
+                    Action = _ =>
+                    {
+                        bool success = Copy(selectedResult.SubTitle, false);
+                        return success;
+                    }
+                }
+            };
+        }
+
+        /// <summary>
+        /// Copies the path to clipboard (name or full path), used in the context menu.
+        /// </summary>
+        private bool Copy(string path, bool copyNameOnly)
+        {
+            string toCopy = copyNameOnly ? Path.GetFileName(path) : path;
+
+            try
+            {
+                _context.API.CopyToClipboard(toCopy);
+                return true;
+            }
+            catch
+            {
+                _context.API.ShowMsgError("Failed to copy", $"Failed to copy the folder's {(copyNameOnly ? "name" : "full path")} to clipboard");
+                return false;
+            }
+        }
+
         /// <summary>
         /// Attempts to parse the bookmarks and add them to 'target' list.
         /// </summary>
@@ -77,11 +132,6 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             {
                 // Silently skip if parsing fails (e.g. the settings file is malformed)
             }
-        }
-
-        public Control CreateSettingPanel()
-        {
-            return new SettingsControl(_context, _settings);
         }
     }
 }
