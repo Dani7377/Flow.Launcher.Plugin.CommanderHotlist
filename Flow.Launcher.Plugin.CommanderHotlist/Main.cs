@@ -73,6 +73,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
 
         public List<Result> LoadContextMenus(Result selectedResult)
         {
+            // --- Context menu items for copy folder's name/path ---
+
             List<Result> r = new List<Result>()
             {
                 new Result
@@ -100,46 +102,53 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 }
             };
 
-            // Double Commander, only if it's enabled in settings
-            ToolConfig? doubleCommanderToolConfig = activeTools.FirstOrDefault(t => t.ToolType == ToolType.DoubleCommander);
-            if (doubleCommanderToolConfig != null)
-            {
-                r.Add(new Result
-                {
-                    Title = $"Open in {doubleCommanderToolConfig.DisplayName}",
-                    SubTitle = $"Open the folder in {doubleCommanderToolConfig.DisplayName}",
-                    IcoPath = "Images\\app.png",
-                    Action = _ =>
-                    {
-                        if (!CommanderLauncher.Launch(selectedResult.SubTitle, doubleCommanderToolConfig, _context))
-                        {
-                            _context.API.ShowMsgError("Error while opening the folder", $"Error while opening the folder in {doubleCommanderToolConfig.DisplayName}");
-                            return false;
-                        }
-                        return true;
-                    }
-                });
-            }
+            // --- Context menu items for "Open in <tool>" ---
 
-            // Total Commander, only if it's enabled in settings
-            ToolConfig? totalCommanderToolConfig = activeTools.FirstOrDefault(t => t.ToolType == ToolType.TotalCommander);
-            if(totalCommanderToolConfig != null)
+            if (activeTools != null && activeTools.Count > 0)
             {
-                r.Add(new Result
-                {
-                    Title = $"Open in {totalCommanderToolConfig.DisplayName}",
-                    SubTitle = $"Open the folder in {totalCommanderToolConfig.DisplayName}",
-                    IcoPath = "Images\\app.png",
-                    Action = _ =>
+                /* If we have more than one tool enabled in settings (e.g. TC, DC and maybe others in future), we might have mixed bookmarks from each of these in the results
+                We show the "source tool" (the one where the bookmark comes from) first in the context menu, above the other ones */
+
+                ToolType? sourceToolType = selectedResult.ContextData is ToolType ? (ToolType)selectedResult.ContextData : null;
+                ToolConfig? sourceTool = sourceToolType != null ? activeTools.FirstOrDefault(t => t.ToolType == sourceToolType) : null;
+
+                if (sourceTool != null)
+                    r.Add(new Result
                     {
-                        if (!CommanderLauncher.Launch(selectedResult.SubTitle, totalCommanderToolConfig, _context))
+                        Title = $"Open in {sourceTool.DisplayName}",
+                        SubTitle = $"Open the folder in {sourceTool.DisplayName}",
+                        IcoPath = "Images\\app.png",
+                        Action = _ =>
                         {
-                            _context.API.ShowMsgError("Error while opening the folder", $"Error while opening the folder in {totalCommanderToolConfig.DisplayName}");
-                            return false;
+                            if (!CommanderLauncher.Launch(selectedResult.SubTitle, sourceTool, _context))
+                            {
+                                _context.API.ShowMsgError("Error while opening the folder", $"Error while opening the folder in {sourceTool.DisplayName}");
+                                return false;
+                            }
+                            return true;
                         }
-                        return true;
-                    }
-                });
+                    });
+
+                // ... and then show the other enabled tools if we have any more
+
+                foreach (var tool in activeTools.Where(t => t != sourceTool))
+                {
+                    r.Add(new Result
+                    {
+                        Title = $"Open in {tool.DisplayName}",
+                        SubTitle = $"Open the folder in {tool.DisplayName}",
+                        IcoPath = "Images\\app.png",
+                        Action = _ =>
+                        {
+                            if (!CommanderLauncher.Launch(selectedResult.SubTitle, tool, _context))
+                            {
+                                _context.API.ShowMsgError("Error while opening the folder", $"Error while opening the folder in {tool.DisplayName}");
+                                return false;
+                            }
+                            return true;
+                        }
+                    });
+                }
             }
 
             return r;
