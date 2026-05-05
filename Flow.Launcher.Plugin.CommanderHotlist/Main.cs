@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Flow.Launcher.Plugin.CommanderHotlist
