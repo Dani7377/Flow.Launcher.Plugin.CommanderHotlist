@@ -15,7 +15,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 context.API.ShowMsg(
                     $"{tool.DisplayName} not configured",
                     $"Please configure it in the settings.",
-                    "Images\\app.png");
+                    ImagePaths.AppImage);
                 return true;
             }
 
@@ -24,7 +24,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 context.API.ShowMsg(
                     $"{tool.DisplayName} executable not found",
                     $"Pleae check the configuration in the settings.",
-                    "Images\\app.png");
+                    ImagePaths.AppImage);
                 return true;
             }
 
@@ -47,7 +47,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 context.API.ShowMsg(
                     "Error Launching Application",
                     ex.Message,
-                    "Images\\app.png");
+                    ImagePaths.AppImage);
             }
 
             return true;

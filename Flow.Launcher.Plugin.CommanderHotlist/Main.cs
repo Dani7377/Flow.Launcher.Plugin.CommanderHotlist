@@ -80,7 +80,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 {
                     Title = "Copy folder's name",
                     SubTitle = "Copy the name of the folder to clipboard",
-                    IcoPath = "Images\\app.png",
+                    IcoPath = ImagePaths.AppImage,
                     Action = _ =>
                     {
                         bool success = Copy(selectedResult.SubTitle, true);
@@ -92,7 +92,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 {
                     Title = "Copy folder's path",
                     SubTitle = "Copy the full path of the folder to clipboard",
-                    IcoPath = "Images\\app.png",
+                    IcoPath = ImagePaths.AppImage,
                     Action = _ =>
                     {
                         bool success = Copy(selectedResult.SubTitle, false);
@@ -116,7 +116,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                     {
                         Title = $"Open in {sourceTool.DisplayName}",
                         SubTitle = $"Open the folder in {sourceTool.DisplayName}",
-                        IcoPath = "Images\\app.png",
+                        IcoPath = ImagePaths.AppImage,
                         Action = _ =>
                         {
                             if (!CommanderLauncher.Launch(selectedResult.SubTitle, sourceTool, _context))
@@ -136,7 +136,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                     {
                         Title = $"Open in {tool.DisplayName}",
                         SubTitle = $"Open the folder in {tool.DisplayName}",
-                        IcoPath = "Images\\app.png",
+                        IcoPath = ImagePaths.AppImage,
                         Action = _ =>
                         {
                             if (!CommanderLauncher.Launch(selectedResult.SubTitle, tool, _context))
@@ -186,5 +186,10 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 // Silently skip if parsing fails (e.g. the settings file is malformed)
             }
         }
+    }
+
+    internal static class ImagePaths
+    {
+        public const string AppImage = "Images\\app.png";
     }
 }

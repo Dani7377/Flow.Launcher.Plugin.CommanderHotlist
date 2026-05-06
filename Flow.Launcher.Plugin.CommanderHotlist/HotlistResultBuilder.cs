@@ -20,7 +20,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             {
                 Title = title,
                 SubTitle = entry.Path,
-                IcoPath = "Images\\app.png",
+                IcoPath = ImagePaths.AppImage,
                 ContextData = (ToolType)tool.ToolType,
                 Action = _ => CommanderLauncher.Launch(entry.Path, tool, context)
             };
