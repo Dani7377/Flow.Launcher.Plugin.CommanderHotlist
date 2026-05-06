@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Media.Imaging;
 
 namespace Flow.Launcher.Plugin.CommanderHotlist
 {
@@ -8,24 +9,21 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         /// <summary>
         /// Launches the configured file manager with the given target directory with optional arguments.
         /// </summary>
-        public static bool Launch(string targetDirectory, ToolConfig tool, PluginInitContext context)
+        public static ActionResult Launch(string targetDirectory, ToolConfig tool, PluginInitContext context)
         {
             if (string.IsNullOrWhiteSpace(tool.ExecutablePath))
             {
-                context.API.ShowMsg(
-                    $"{tool.DisplayName} not configured",
-                    $"Please configure it in the settings.",
-                    ImagePaths.AppImage);
-                return true;
+                return ActionResult.Fail($"{tool.DisplayName} not configured", null);
             }
 
             if (!File.Exists(tool.ExecutablePath))
             {
-                context.API.ShowMsg(
-                    $"{tool.DisplayName} executable not found",
-                    $"Pleae check the configuration in the settings.",
-                    ImagePaths.AppImage);
-                return true;
+                return ActionResult.Fail($"{tool.DisplayName} executable not found", null);
+            }
+
+            if(!Directory.Exists(targetDirectory))
+            {
+                return ActionResult.Fail("The selected location does not exist", null);
             }
 
             try
@@ -41,16 +39,13 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                     UseShellExecute = true
                 };
                 Process.Start(process);
-            }
-            catch (Exception ex)
-            {
-                context.API.ShowMsg(
-                    "Error Launching Application",
-                    ex.Message,
-                    ImagePaths.AppImage);
-            }
 
-            return true;
+                return ActionResult.Success();
+            }
+            catch(Exception ex)
+            {
+                return ActionResult.Fail($"Error launching {tool.DisplayName}", ex);
+            }
         }
     }
 }
