@@ -5,18 +5,20 @@
         public bool IsSuccess { get; }
         public string Message { get; }
         public Exception? Exception { get; }
+        public string? ClassName { get; }
 
-        private ActionResult(bool success, string userMessage, Exception? ex)
+        private ActionResult(bool success, string userMessage, Exception? ex, string? className)
         {
             IsSuccess = success;
             Message = userMessage;
             Exception = ex;
+            ClassName = className;
         }
 
-        public static ActionResult Success() => new ActionResult(true, string.Empty, null);
+        public static ActionResult Success() => new ActionResult(true, string.Empty, null, null);
 
-        public static ActionResult Fail(string userMessage, Exception? ex)
-            => new ActionResult(false, userMessage, ex);
+        public static ActionResult Fail(string userMessage, Exception? ex, string? className)
+            => new ActionResult(false, userMessage, ex, className);
 
         /// <summary>
         /// Handles an ActionResult:
@@ -32,7 +34,16 @@
 
             if (result.Exception != null)
             {
-                context.API.LogException(nameof(Main), result.Message, result.Exception);
+                string className;
+                if(result.ClassName != null)
+                {
+                    className = result.ClassName;
+                }
+                else // I don't even think it's possible to reach this 'else'
+                {
+                    className = nameof(Main);
+                }
+                context.API.LogException(className, result.Message, result.Exception);
             }
 
             return result.IsSuccess;

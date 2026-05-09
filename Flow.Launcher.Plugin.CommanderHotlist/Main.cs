@@ -6,6 +6,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
 {
     public class Main : IPlugin, ISettingProvider, IContextMenu
     {
+        private string mainClassName = nameof(Main);
         private PluginInitContext _context = null!;
         private Settings _settings = null!;
         private List<ToolConfig>? activeTools;
@@ -174,7 +175,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             }
             catch(Exception ex)
             {
-                return ActionResult.Fail($"Failed to copy {(copyNameOnly ? "name" : "path")} to clipboard", ex);
+                return ActionResult.Fail($"Failed to copy {(copyNameOnly ? "name" : "path")} to clipboard", ex, mainClassName);
             }
         }
 
@@ -185,7 +186,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         {
             if(!Directory.Exists(workingDirectory))
             {
-                return ActionResult.Fail("The selected location no longer exists", null);
+                return ActionResult.Fail("The selected location no longer exists", null, mainClassName);
             }
 
             try
@@ -218,7 +219,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 }
                 catch (Exception ex)
                 {
-                    return ActionResult.Fail("Failed to launch the terminal", ex);
+                    return ActionResult.Fail("Failed to launch the terminal", ex, mainClassName);
                 }
             }
         }
