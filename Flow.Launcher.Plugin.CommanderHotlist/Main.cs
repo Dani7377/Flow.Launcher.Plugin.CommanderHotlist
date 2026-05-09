@@ -74,34 +74,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
 
         public List<Result> LoadContextMenus(Result selectedResult)
         {
-            // --- Context menu items for copy folder's name/path ---
-
-            List<Result> r = new List<Result>()
-            {
-                new Result
-                {
-                    Title = "Copy folder's name",
-                    SubTitle = "Copy the name of the folder to clipboard",
-                    IcoPath = ImagePaths.AppImage,
-                    Action = _ =>
-                    {
-                        ActionResult copyNameActionResult = Copy(selectedResult.SubTitle, true);
-                        return ActionResult.HandleActionResult(copyNameActionResult, _context);
-                    }
-                },
-
-                new Result
-                {
-                    Title = "Copy folder's path",
-                    SubTitle = "Copy the full path of the folder to clipboard",
-                    IcoPath = ImagePaths.AppImage,
-                    Action = _ =>
-                    {
-                        ActionResult copyPathActionResult = Copy(selectedResult.SubTitle, false);
-                        return ActionResult.HandleActionResult(copyPathActionResult, _context);
-                    }
-                }
-            };
+            List<Result> r = new List<Result>();
 
             // --- Context menu items for "Open in <tool>" ---
 
@@ -144,7 +117,33 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 }
             }
 
-            // --- Open folder in terminal ---
+            // --- Context menu items for copy folder's name/path ---
+
+            r.Add(new Result
+            {
+                Title = "Copy folder's name",
+                SubTitle = "Copy the name of the folder to clipboard",
+                IcoPath = ImagePaths.AppImage,
+                Action = _ =>
+                {
+                    ActionResult copyNameActionResult = Copy(selectedResult.SubTitle, true);
+                    return ActionResult.HandleActionResult(copyNameActionResult, _context);
+                }
+            });
+
+            r.Add(new Result
+            {
+                Title = "Copy folder's path",
+                SubTitle = "Copy the full path of the folder to clipboard",
+                IcoPath = ImagePaths.AppImage,
+                Action = _ =>
+                {
+                    ActionResult copyPathActionResult = Copy(selectedResult.SubTitle, false);
+                    return ActionResult.HandleActionResult(copyPathActionResult, _context);
+                }
+            });
+
+            // --- Context menu item for open folder in terminal ---
 
             r.Add(new Result
             {
