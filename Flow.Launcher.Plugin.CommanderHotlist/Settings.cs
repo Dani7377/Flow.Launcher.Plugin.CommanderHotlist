@@ -6,13 +6,20 @@
         public bool DcEnabled { get; set; } = false;
         public string DcExecutablePath { get; set; } = string.Empty;
         public string DcSettingsXmlPath { get; set; } = string.Empty;
-        public string DcAdditionalArguments { get; set; } = string.Empty;
+
+        /* -C = open in running instance if any
+         * -T = open in new tab */
+        public string DcAdditionalArguments { get; set; } = "-C -T";
 
         // --- Total Commander ---
         public bool TcEnabled { get; set; } = false;
         public string TcExecutablePath { get; set; } = string.Empty;
         public string TcSettingsIniPath { get; set; } = string.Empty;
-        public string TcAdditionalArguments { get; set; } = string.Empty;
+
+        /* /O = open in running instance if any
+         * /S = open in active panel (DC does that by default)
+         * /T = open in new tab */
+        public string TcAdditionalArguments { get; set; } = "/O /S /T";
 
         // --- Global settings (affect all tools) ---
         public bool ShowSubmenuNames { get; set; } = false;
