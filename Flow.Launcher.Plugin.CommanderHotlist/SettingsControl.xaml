@@ -3,30 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             d:DesignHeight="500"
-             d:DesignWidth="500"
+             d:DesignHeight="600"
+             d:DesignWidth="600"
              mc:Ignorable="d">
-    <Grid Margin="{StaticResource SettingPanelMargin}" VerticalAlignment="Top">
+    <Grid Margin="{StaticResource SettingPanelMargin}" VerticalAlignment="Top" Grid.IsSharedSizeScope="True">
         <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- ============================================================
-             Total Commander Section
-             ============================================================ -->
         <TextBlock Text="Total Commander" FontWeight="SemiBold"
                    Grid.Row="0" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}" />
 
@@ -36,7 +33,7 @@
 
         <Grid Grid.Row="2" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -50,12 +47,12 @@
 
         <Grid Grid.Row="3" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Settings INI Path:" VerticalAlignment="Center"
+            <TextBlock Text="Settings INI Path (wincmd.ini):" VerticalAlignment="Center"
                        Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0" />
             <TextBox x:Name="TcSettingsPath" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1" />
             <Button x:Name="TcSettingsBrowse" Content="Select" Width="80" Height="35"
@@ -64,7 +61,7 @@
 
         <Grid Grid.Row="4" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
@@ -73,12 +70,8 @@
             <TextBox x:Name="TcAdditionalArgs" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1" />
         </Grid>
 
-        <!-- Separator -->
         <Separator Grid.Row="5" Style="{StaticResource SettingPanelSeparatorStyle}" />
 
-        <!-- ============================================================
-             Double Commander Section
-             ============================================================ -->
         <TextBlock Text="Double Commander" FontWeight="SemiBold"
                    Grid.Row="6" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}" />
 
@@ -88,7 +81,7 @@
 
         <Grid Grid.Row="8" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -102,12 +95,12 @@
 
         <Grid Grid.Row="9" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Settings XML Path:" VerticalAlignment="Center"
+            <TextBlock Text="Settings XML Path (doublecmd.xml):" VerticalAlignment="Center"
                        Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0" />
             <TextBox x:Name="DcSettingsPath" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1" />
             <Button x:Name="DcSettingsBrowse" Content="Select" Width="80" Height="35"
@@ -116,7 +109,7 @@
 
         <Grid Grid.Row="10" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
@@ -125,12 +118,8 @@
             <TextBox x:Name="DcAdditionalArgs" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1" />
         </Grid>
 
-        <!-- Separator -->
         <Separator Grid.Row="11" Style="{StaticResource SettingPanelSeparatorStyle}" />
 
-        <!-- ============================================================
-             General Settings Section
-             ============================================================ -->
         <TextBlock Text="General" FontWeight="SemiBold"
                    Grid.Row="12" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}" />
 
