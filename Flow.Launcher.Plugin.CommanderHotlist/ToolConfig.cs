@@ -16,5 +16,6 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         public string SettingsFileFilter { get; init; } = string.Empty;
         public string ExeFileFilter { get; init; } = "Executable files (*.exe)|*.exe|All files (*.*)|*.*";
         public string SubtitleTag { get; init; } = string.Empty;
+        public bool ShowSubmenuNames { get; set; }
     }
 }

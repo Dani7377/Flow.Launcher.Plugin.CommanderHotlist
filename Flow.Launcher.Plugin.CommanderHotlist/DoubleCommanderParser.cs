@@ -1,27 +1,52 @@
+using Flow.Launcher.Plugin.CommanderHotlist;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
-namespace Flow.Launcher.Plugin.CommanderHotlist
+internal class DoubleCommanderParser : IHotlistParser
 {
-    /// <summary>
-    /// Parses Double Commander settings XML file to extract directory hotlist entries.
-    /// </summary>
-    internal class DoubleCommanderParser : IHotlistParser
+    public IEnumerable<HotlistEntry> Parse(string filePath)
     {
-        /// <inheritdoc/>
-        public IEnumerable<HotlistEntry> Parse(string filePath)
+        var doc = XDocument.Load(filePath);
+        var menuStack = new Stack<string>();
+
+        foreach (var hotDir in doc.Descendants("HotDir"))
         {
-            var doc = XDocument.Load(filePath);
+            var name = hotDir.Attribute("Name")?.Value ?? string.Empty;
+            var path = hotDir.Attribute("Path")?.Value ?? string.Empty;
 
-            foreach (var hotDir in doc.Descendants("HotDir"))
+            // Handle submenu exit
+            if (name == "--")
             {
-                var name = hotDir.Attribute("Name")?.Value ?? "Unnamed";
-                var path = hotDir.Attribute("Path")?.Value ?? string.Empty;
+                if (menuStack.Count > 0) menuStack.Pop();
+                continue;
+            }
 
-                // Ignore elements that have an empty path (e.g. separators)
-                if (!string.IsNullOrEmpty(path))
+            // Handle submenu entry
+            // We only push to the stack if it starts with a single "-" and contains actual text
+            if (name.StartsWith("-") && !name.StartsWith("--") && string.IsNullOrEmpty(path))
+            {
+                var cleanName = name.TrimStart('-').Trim();
+
+                // If it's just a separator "-" ignore
+                if (!string.IsNullOrEmpty(cleanName))
                 {
-                    yield return new HotlistEntry(name, path, ToolType.DoubleCommander);
+                    menuStack.Push(cleanName);
                 }
+                continue;
+            }
+
+            // Handle directory entries
+            // We ignore items with no path (e.g. separators)
+            if (!string.IsNullOrEmpty(path))
+            {
+                var parents = menuStack.Reverse().ToList();
+
+                yield return new HotlistEntry(
+                    name,
+                    path,
+                    ToolType.DoubleCommander,
+                    parents);
             }
         }
     }

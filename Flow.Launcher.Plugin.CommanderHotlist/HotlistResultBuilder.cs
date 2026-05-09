@@ -12,19 +12,36 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             IReadOnlyDictionary<ToolType, string> subtitleTagLookup, 
             bool showSourceTag, IReadOnlyDictionary<ToolType, ToolConfig> toolLookup)
         {
-            string subtitle = showSourceTag ? subtitleTagLookup[entry.ToolType] + " " + entry.Path : entry.Path;
+            ToolConfig tool = toolLookup[entry.ToolType];
+             
+            // Prefix the title (name) with the name of the parent submenu(s) if it's enabled in settings
+            string entryNameParentsPrefix = "";
+            if(tool.ShowSubmenuNames)
+            {
+                for(int i=0;i<entry.Parents.Count;i++)
+                {
+                    entryNameParentsPrefix += entry.Parents[i];
+                    if (i < entry.Parents.Count)
+                        entryNameParentsPrefix += " > ";
+                }
+            }
 
-            var tool = toolLookup[entry.ToolType];
+            string entryNameWithoutPrefix = entry.Name;
+            string entryPathWithoutPrefix = entry.Path;
+
+            string displayedEntryName = entryNameParentsPrefix + entryNameWithoutPrefix;
+            string displayedEntryPath = showSourceTag ? 
+                subtitleTagLookup[entry.ToolType] + " " + entryPathWithoutPrefix : entryPathWithoutPrefix;
 
             Result result = new Result
             {
-                Title = entry.Name,
-                SubTitle = subtitle,
+                Title = displayedEntryName,
+                SubTitle = displayedEntryPath,
                 IcoPath = ImagePaths.AppImage,
                 ContextData = (ToolType)tool.ToolType,
                 Action = _ =>
                 {
-                    ActionResult launchToolActionResult = CommanderLauncher.Launch(entry.Path, tool, context);
+                    ActionResult launchToolActionResult = CommanderLauncher.Launch(entryPathWithoutPrefix, tool, context);
                     return ActionResult.HandleActionResult(launchToolActionResult, context);
                 }
             };
@@ -36,9 +53,12 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 return result;
             }
 
-            // Fuzzy-match against both name and path, pick the best score
-            MatchResult nameMatch = context.API.FuzzySearch(searchTerm, entry.Name);
-            MatchResult pathMatch = context.API.FuzzySearch(searchTerm, entry.Path);
+            /* Fuzzy-match against both name and path, pick the best score
+             * If submenu names are displayed in title (enabled in settings), use "displayedEntryName" to include them in fuzzy search
+             * If source tags are displayed in subtitle, use "entryPathWithoutPrefix", we don't need them to be included in search
+             */
+            MatchResult nameMatch = context.API.FuzzySearch(searchTerm, displayedEntryName);
+            MatchResult pathMatch = context.API.FuzzySearch(searchTerm, entryPathWithoutPrefix);
 
             // Determine which match is better, but only if at least one meets the precision score
             MatchResult? bestMatch = null;
@@ -65,7 +85,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
 
             // Boost entries where the search term matches at the very start of the name
             // e.g. searching "pr" will match "Projects" higher than "VS Projects"
-            if (entry.Name.StartsWith(searchTerm, StringComparison.OrdinalIgnoreCase))
+            if (displayedEntryName.StartsWith(searchTerm, StringComparison.OrdinalIgnoreCase))
             {
                 result.Score += 100;
             }

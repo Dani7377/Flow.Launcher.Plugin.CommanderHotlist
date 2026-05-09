@@ -1,64 +1,84 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Flow.Launcher.Plugin.CommanderHotlist
 {
-    /// <summary>
-    /// Parses Total Commander INI settings files to extract directory hotlist entries.
-    /// </summary>
     internal class TotalCommanderParser : IHotlistParser
     {
-        // Matches "menu0=Some Name" — captures the display name
         private static readonly Regex MenuLineRegex = new(
             @"^menu\d+=(.*)$",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        // Matches "cmd0=cd C:\Path" or "cmd0=C:\Path" — captures the directory path
         private static readonly Regex CommandLineRegex = new(
             @"^cmd\d+=(?:cd\s+)?(.*)$",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        /// <inheritdoc/>
         public IEnumerable<HotlistEntry> Parse(string filePath)
         {
             var iniLines = File.ReadAllLines(filePath);
             var inDirMenu = false;
             string? pendingName = null;
 
+            var menuStack = new Stack<string>();
+
             foreach (var line in iniLines)
             {
                 var trimmed = line.Trim();
 
-                // Detect entry into or exit from the [DirMenu] section
                 if (trimmed.StartsWith('[') && trimmed.EndsWith(']'))
                 {
                     inDirMenu = trimmed.Equals("[DirMenu]", StringComparison.OrdinalIgnoreCase);
-                    pendingName = null;
                     continue;
                 }
 
-                if (!inDirMenu)
+                if (!inDirMenu) continue;
+
+                // Process menu line
+                var menuMatch = MenuLineRegex.Match(trimmed);
+                if (menuMatch.Success)
                 {
+                    var name = menuMatch.Groups[1].Value.Trim();
+
+                    if (name == "--")
+                    {
+                        if (menuStack.Count > 0) menuStack.Pop();
+                        pendingName = null;
+                    }
+                    else if (name.StartsWith("-") && name.Length > 1)
+                    {
+                        // If it's a submenu start e.g. "-Projects"
+                        var menuName = name.TrimStart('-');
+                        menuStack.Push(menuName);
+                        pendingName = null; // Submenus items like "-Projects" don't have paths in TC
+                    }
+                    else if (name == "-") // it's just a separator
+                    {
+                        pendingName = null;
+                    }
+                    else // it's a standard entry name
+                    {
+                        pendingName = name;
+                    }
                     continue;
                 }
 
-                // Try to match a "menuN=..." line — stores the display name
-                var match = MenuLineRegex.Match(trimmed);
-                if (match.Success)
+                // Process command line
+                var cmdMatch = CommandLineRegex.Match(trimmed);
+                if (cmdMatch.Success && pendingName != null)
                 {
-                    pendingName = match.Groups[1].Value;
-                    continue;
-                }
-
-                // Try to match a "cmdN=..." line — produces an entry using the pending name
-                match = CommandLineRegex.Match(trimmed);
-                if (match.Success)
-                {
-                    var path = match.Groups[1].Value.Trim();
+                    var path = cmdMatch.Groups[1].Value.Trim();
                     if (!string.IsNullOrEmpty(path))
                     {
-                        var name = pendingName ?? "Unnamed";
-                        yield return new HotlistEntry(name, path, ToolType.TotalCommander);
+                        var parents = menuStack.Reverse().ToList();
+
+                        yield return new HotlistEntry(
+                            pendingName,
+                            path,
+                            ToolType.TotalCommander,
+                            parents);
                     }
                     pendingName = null;
                 }

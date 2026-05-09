@@ -14,6 +14,9 @@
         public string TcSettingsIniPath { get; set; } = string.Empty;
         public string TcAdditionalArguments { get; set; } = string.Empty;
 
+        // --- Global settings (affect all tools) ---
+        public bool ShowSubmenuNames { get; set; } = false;
+
         internal IEnumerable<ToolConfig> GetTools()
         {
             yield return new ToolConfig
@@ -27,7 +30,8 @@
                 Parser = new DoubleCommanderParser(),
                 SettingsFileLabel = "DC Settings XML Path:",
                 SettingsFileFilter = "XML files (*.xml)|*.xml|All files (*.*)|*.*",
-                SubtitleTag = "[DC]"
+                SubtitleTag = "[DC]",
+                ShowSubmenuNames = ShowSubmenuNames
             };
 
             yield return new ToolConfig
@@ -41,7 +45,8 @@
                 Parser = new TotalCommanderParser(),
                 SettingsFileLabel = "TC Settings INI Path:",
                 SettingsFileFilter = "INI files (*.ini)|*.ini|All files (*.*)|*.*",
-                SubtitleTag = "[TC]"
+                SubtitleTag = "[TC]",
+                ShowSubmenuNames = ShowSubmenuNames
             };
         }
 

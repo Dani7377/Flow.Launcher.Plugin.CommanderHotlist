@@ -26,6 +26,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             TcSettingsPath.Text = settings.TcSettingsIniPath;
             TcAdditionalArgs.Text = settings.TcAdditionalArguments;
 
+            ShowSubmenuNames.IsChecked = settings.ShowSubmenuNames;
+
             // Events
             DcEnabled.Checked += (_, _) => SaveDcSettings();
             DcEnabled.Unchecked += (_, _) => SaveDcSettings();
@@ -38,6 +40,9 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             TcExePath.LostFocus += (_, _) => SaveTcSettings();
             TcSettingsPath.LostFocus += (_, _) => SaveTcSettings();
             TcAdditionalArgs.LostFocus += (_, _) => SaveTcSettings();
+
+            ShowSubmenuNames.Checked += (_, _) => SaveGlobalSettings();
+            ShowSubmenuNames.Unchecked += (_, _) => SaveGlobalSettings();
 
             DcExeBrowse.Click += (_, _) => BrowseFile(DcExePath, "Executable files (*.exe)|*.exe|All files (*.*)|*.*");
             DcSettingsBrowse.Click += (_, _) => BrowseFile(DcSettingsPath, "XML files (*.xml)|*.xml|All files (*.*)|*.*");
@@ -67,6 +72,13 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             _settings.TcAdditionalArguments = TcAdditionalArgs.Text;
 
             UpdateEnabledStates();
+            _context.API.SaveSettingJsonStorage<Settings>();
+        }
+
+        private void SaveGlobalSettings()
+        {
+            _settings.ShowSubmenuNames = ShowSubmenuNames.IsChecked ?? false;
+
             _context.API.SaveSettingJsonStorage<Settings>();
         }
 

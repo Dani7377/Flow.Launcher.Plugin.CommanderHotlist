@@ -16,6 +16,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- ============================================================
@@ -101,5 +102,11 @@
                        Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0" />
             <TextBox x:Name="TcAdditionalArgs" Height="23" VerticalAlignment="Center" Grid.Column="1" />
         </Grid>
+
+        <!-- ============================================================
+             Global Settings Section
+             ============================================================ -->
+        <CheckBox x:Name="ShowSubmenuNames" Content="Show submenu hierarchy in results"
+                  Grid.Row="8" Margin="{StaticResource SettingPanelItemTopBottomMargin}" />
     </Grid>
 </UserControl>
