@@ -185,7 +185,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         {
             if(!Directory.Exists(workingDirectory))
             {
-                return ActionResult.Fail("The selected location no longer exists", null, mainClassName);
+                return ActionResult.Fail("The selected location does not exist", null, mainClassName);
             }
 
             try
