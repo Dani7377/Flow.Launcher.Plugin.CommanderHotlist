@@ -38,7 +38,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             var entries = new List<HotlistEntry>();
             foreach (var tool in activeTools)
             {
-                TryLoad(() => tool.Parser.Parse(tool.SettingsFilePath), entries);
+                ActionResult tryLoadResult = TryLoad(() => tool.Parser.Parse(tool.SettingsFilePath), entries);
+                ActionResult.HandleActionResult(tryLoadResult, _context);
             }
 
             // Show source tags like "[TC]" or "[DC]" only if we have more than one tool active, otherwise don't display them
@@ -225,15 +226,16 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         /// <summary>
         /// Attempts to parse the bookmarks and add them to 'target' list.
         /// </summary>
-        private static void TryLoad(Func<IEnumerable<HotlistEntry>> parse, List<HotlistEntry> target)
+        private ActionResult TryLoad(Func<IEnumerable<HotlistEntry>> parse, List<HotlistEntry> target)
         {
             try
             {
                 target.AddRange(parse());
+                return ActionResult.Success();
             }
-            catch
+            catch(Exception ex)
             {
-                // Silently skip if parsing fails (e.g. the settings file is malformed)
+                return ActionResult.Fail("Failed to parse the settings file", ex, mainClassName);
             }
         }
     }
