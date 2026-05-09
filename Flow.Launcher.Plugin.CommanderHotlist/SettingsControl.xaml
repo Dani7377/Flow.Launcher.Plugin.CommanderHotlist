@@ -3,110 +3,139 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             d:DesignHeight="400"
+             d:DesignHeight="500"
              d:DesignWidth="500"
              mc:Ignorable="d">
-    <Grid Margin="{StaticResource SettingPanelMargin}">
+    <Grid Margin="{StaticResource SettingPanelMargin}" VerticalAlignment="Top">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
-
-        <!-- ============================================================
-             Double Commander Section
-             ============================================================ -->
-        <CheckBox x:Name="DcEnabled" Content="Enable Double Commander"
-                  Grid.Row="0" Margin="{StaticResource SettingPanelItemTopBottomMargin}" />
-
-        <Grid Grid.Row="1" Margin="{StaticResource SettingPanelItemTopBottomMargin}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="DC Executable Path:" VerticalAlignment="Center"
-                       Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0" />
-            <TextBox x:Name="DcExePath" Height="23" VerticalAlignment="Center" Grid.Column="1" />
-            <Button x:Name="DcExeBrowse" Content="Browse..." Width="80" Height="35"
-                    Margin="{StaticResource SettingPanelItemLeftMargin}" VerticalAlignment="Center" Grid.Column="2" />
-        </Grid>
-
-        <Grid Grid.Row="2" Margin="{StaticResource SettingPanelItemTopBottomMargin}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="DC Settings XML Path:" VerticalAlignment="Center"
-                       Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0" />
-            <TextBox x:Name="DcSettingsPath" Height="23" VerticalAlignment="Center" Grid.Column="1" />
-            <Button x:Name="DcSettingsBrowse" Content="Browse..." Width="80" Height="35"
-                    Margin="{StaticResource SettingPanelItemLeftMargin}" VerticalAlignment="Center" Grid.Column="2" />
-        </Grid>
-
-        <Grid Grid.Row="3" Margin="{StaticResource SettingPanelItemTopBottomMargin}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="DC Additional Arguments:" VerticalAlignment="Center"
-                       Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0" />
-            <TextBox x:Name="DcAdditionalArgs" Height="23" VerticalAlignment="Center" Grid.Column="1" />
-        </Grid>
 
         <!-- ============================================================
              Total Commander Section
              ============================================================ -->
-        <CheckBox x:Name="TcEnabled" Content="Enable Total Commander"
-                  Grid.Row="4" Margin="{StaticResource SettingPanelItemTopBottomMargin}" />
+        <TextBlock Text="Total Commander" FontWeight="SemiBold"
+                   Grid.Row="0" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}" />
 
-        <Grid Grid.Row="5" Margin="{StaticResource SettingPanelItemTopBottomMargin}">
+        <CheckBox x:Name="TcEnabled" Content="Enable"
+                  Grid.Row="1" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}"
+                  HorizontalAlignment="Left" />
+
+        <Grid Grid.Row="2" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="TC Executable Path:" VerticalAlignment="Center"
+            <TextBlock Text="Executable Path:" VerticalAlignment="Center"
                        Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0" />
-            <TextBox x:Name="TcExePath" Height="23" VerticalAlignment="Center" Grid.Column="1" />
-            <Button x:Name="TcExeBrowse" Content="Browse..." Width="80" Height="35"
+            <TextBox x:Name="TcExePath" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1" />
+            <Button x:Name="TcExeBrowse" Content="Select" Width="80" Height="35"
                     Margin="{StaticResource SettingPanelItemLeftMargin}" VerticalAlignment="Center" Grid.Column="2" />
         </Grid>
 
-        <Grid Grid.Row="6" Margin="{StaticResource SettingPanelItemTopBottomMargin}">
+        <Grid Grid.Row="3" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="TC Settings INI Path:" VerticalAlignment="Center"
+            <TextBlock Text="Settings INI Path:" VerticalAlignment="Center"
                        Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0" />
-            <TextBox x:Name="TcSettingsPath" Height="23" VerticalAlignment="Center" Grid.Column="1" />
-            <Button x:Name="TcSettingsBrowse" Content="Browse..." Width="80" Height="35"
+            <TextBox x:Name="TcSettingsPath" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1" />
+            <Button x:Name="TcSettingsBrowse" Content="Select" Width="80" Height="35"
                     Margin="{StaticResource SettingPanelItemLeftMargin}" VerticalAlignment="Center" Grid.Column="2" />
         </Grid>
 
-        <Grid Grid.Row="7" Margin="{StaticResource SettingPanelItemTopBottomMargin}">
+        <Grid Grid.Row="4" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="TC Additional Arguments:" VerticalAlignment="Center"
+            <TextBlock Text="Additional Arguments:" VerticalAlignment="Center"
                        Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0" />
-            <TextBox x:Name="TcAdditionalArgs" Height="23" VerticalAlignment="Center" Grid.Column="1" />
+            <TextBox x:Name="TcAdditionalArgs" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1" />
         </Grid>
+
+        <!-- Separator -->
+        <Separator Grid.Row="5" Style="{StaticResource SettingPanelSeparatorStyle}" />
 
         <!-- ============================================================
-             Global Settings Section
+             Double Commander Section
              ============================================================ -->
+        <TextBlock Text="Double Commander" FontWeight="SemiBold"
+                   Grid.Row="6" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}" />
+
+        <CheckBox x:Name="DcEnabled" Content="Enable"
+                  Grid.Row="7" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}"
+                  HorizontalAlignment="Left" />
+
+        <Grid Grid.Row="8" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Executable Path:" VerticalAlignment="Center"
+                       Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0" />
+            <TextBox x:Name="DcExePath" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1" />
+            <Button x:Name="DcExeBrowse" Content="Select" Width="80" Height="35"
+                    Margin="{StaticResource SettingPanelItemLeftMargin}" VerticalAlignment="Center" Grid.Column="2" />
+        </Grid>
+
+        <Grid Grid.Row="9" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Settings XML Path:" VerticalAlignment="Center"
+                       Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0" />
+            <TextBox x:Name="DcSettingsPath" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1" />
+            <Button x:Name="DcSettingsBrowse" Content="Select" Width="80" Height="35"
+                    Margin="{StaticResource SettingPanelItemLeftMargin}" VerticalAlignment="Center" Grid.Column="2" />
+        </Grid>
+
+        <Grid Grid.Row="10" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Additional Arguments:" VerticalAlignment="Center"
+                       Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0" />
+            <TextBox x:Name="DcAdditionalArgs" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1" />
+        </Grid>
+
+        <!-- Separator -->
+        <Separator Grid.Row="11" Style="{StaticResource SettingPanelSeparatorStyle}" />
+
+        <!-- ============================================================
+             General Settings Section
+             ============================================================ -->
+        <TextBlock Text="General" FontWeight="SemiBold"
+                   Grid.Row="12" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}" />
+
         <CheckBox x:Name="ShowSubmenuNames" Content="Show submenu hierarchy in results"
-                  Grid.Row="8" Margin="{StaticResource SettingPanelItemTopBottomMargin}" />
+                  Grid.Row="13" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}"
+                  HorizontalAlignment="Left" />
     </Grid>
 </UserControl>
