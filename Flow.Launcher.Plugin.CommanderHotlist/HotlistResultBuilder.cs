@@ -10,13 +10,11 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         /// </summary>
         public static Result? Build(HotlistEntry entry, string searchTerm, PluginInitContext context,
             IReadOnlyDictionary<ToolType, string> subtitleTagLookup, 
-            bool showSourceTag, IReadOnlyDictionary<ToolType, ToolConfig> toolLookup)
+            bool showSourceTag, Settings settings)
         {
-            ToolConfig tool = toolLookup[entry.ToolType];
-             
             // Prefix the title (name) with the name of the parent submenu(s) if it's enabled in settings
             string entryNameParentsPrefix = "";
-            if(tool.ShowSubmenuNames)
+            if(settings.ShowSubmenuNames)
             {
                 for(int i=0;i<entry.Parents.Count;i++)
                 {
@@ -38,10 +36,11 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 Title = displayedEntryName,
                 SubTitle = displayedEntryPath,
                 IcoPath = ImagePaths.AppImage,
-                ContextData = (ToolType)tool.ToolType,
+                ContextData = (ToolType)entry.ToolType,
                 Action = _ =>
                 {
-                    ActionResult launchToolActionResult = CommanderLauncher.Launch(entryPathWithoutPrefix, tool, context);
+                    ToolConfig currentTool = settings.GetTools().First(t => t.ToolType == entry.ToolType);
+                    ActionResult launchToolActionResult = CommanderLauncher.Launch(entryPathWithoutPrefix, currentTool, context);
                     return ActionResult.HandleActionResult(launchToolActionResult, context);
                 }
             };

@@ -43,14 +43,13 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
 
             // Show source tags like "[TC]" or "[DC]" only if we have more than one tool active, otherwise don't display them
             var subtitleTagLookup = activeTools.ToDictionary(t => t.ToolType, t => t.SubtitleTag);
-            var toolLookup = allTools.ToDictionary(t => t.ToolType, t => t);
             var showSourceTag = entries.Select(e => e.ToolType).Distinct().Count() > 1;
 
             // Convert entries to Flow Launcher results with fuzzy search
             var results = new List<Result>();
             foreach (var entry in entries)
             {
-                var result = HotlistResultBuilder.Build(entry, searchTerm, _context, subtitleTagLookup, showSourceTag, toolLookup);
+                var result = HotlistResultBuilder.Build(entry, searchTerm, _context, subtitleTagLookup, showSourceTag, _settings);
                 if (result != null)
                 {
                     results.Add(result);
