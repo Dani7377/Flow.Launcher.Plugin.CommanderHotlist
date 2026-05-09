@@ -1,10 +1,12 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Windows.Controls;
 
 namespace Flow.Launcher.Plugin.CommanderHotlist
 {
     public class Main : IPlugin, ISettingProvider, IContextMenu
     {
+        private string mainClassName = nameof(Main);
         private PluginInitContext _context = null!;
         private Settings _settings = null!;
         private List<ToolConfig>? activeTools;
@@ -80,11 +82,11 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 {
                     Title = "Copy folder's name",
                     SubTitle = "Copy the name of the folder to clipboard",
-                    IcoPath = "Images\\app.png",
+                    IcoPath = ImagePaths.AppImage,
                     Action = _ =>
                     {
-                        bool success = Copy(selectedResult.SubTitle, true);
-                        return success;
+                        ActionResult copyNameActionResult = Copy(selectedResult.SubTitle, true);
+                        return ActionResult.HandleActionResult(copyNameActionResult, _context);
                     }
                 },
 
@@ -92,11 +94,11 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 {
                     Title = "Copy folder's path",
                     SubTitle = "Copy the full path of the folder to clipboard",
-                    IcoPath = "Images\\app.png",
+                    IcoPath = ImagePaths.AppImage,
                     Action = _ =>
                     {
-                        bool success = Copy(selectedResult.SubTitle, false);
-                        return success;
+                        ActionResult copyPathActionResult = Copy(selectedResult.SubTitle, false);
+                        return ActionResult.HandleActionResult(copyPathActionResult, _context);
                     }
                 }
             };
@@ -116,15 +118,11 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                     {
                         Title = $"Open in {sourceTool.DisplayName}",
                         SubTitle = $"Open the folder in {sourceTool.DisplayName}",
-                        IcoPath = "Images\\app.png",
+                        IcoPath = ImagePaths.AppImage,
                         Action = _ =>
                         {
-                            if (!CommanderLauncher.Launch(selectedResult.SubTitle, sourceTool, _context))
-                            {
-                                _context.API.ShowMsgError("Error while opening the folder", $"Error while opening the folder in {sourceTool.DisplayName}");
-                                return false;
-                            }
-                            return true;
+                            ActionResult launchSourceToolActionResult = CommanderLauncher.Launch(selectedResult.SubTitle, sourceTool, _context);
+                            return ActionResult.HandleActionResult(launchSourceToolActionResult, _context);
                         }
                     });
 
@@ -136,19 +134,29 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                     {
                         Title = $"Open in {tool.DisplayName}",
                         SubTitle = $"Open the folder in {tool.DisplayName}",
-                        IcoPath = "Images\\app.png",
+                        IcoPath = ImagePaths.AppImage,
                         Action = _ =>
                         {
-                            if (!CommanderLauncher.Launch(selectedResult.SubTitle, tool, _context))
-                            {
-                                _context.API.ShowMsgError("Error while opening the folder", $"Error while opening the folder in {tool.DisplayName}");
-                                return false;
-                            }
-                            return true;
+                            ActionResult launchOtherToolActionResult = CommanderLauncher.Launch(selectedResult.SubTitle, tool, _context);
+                            return ActionResult.HandleActionResult(launchOtherToolActionResult, _context);
                         }
                     });
                 }
             }
+
+            // --- Open folder in terminal ---
+
+            r.Add(new Result
+            {
+                Title = "Open in terminal",
+                SubTitle = "Open the folder in the default terminal",
+                IcoPath = ImagePaths.AppImage,
+                Action = _ =>
+                {
+                    ActionResult openTerminalActionResult = OpenTerminalInDirectory(selectedResult.SubTitle);
+                    return ActionResult.HandleActionResult(openTerminalActionResult, _context);
+                }
+            });
 
             return r;
         }
@@ -156,19 +164,63 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         /// <summary>
         /// Copies the path to clipboard (name or full path), used in the context menu.
         /// </summary>
-        private bool Copy(string path, bool copyNameOnly)
+        private ActionResult Copy(string path, bool copyNameOnly)
         {
             string toCopy = copyNameOnly ? Path.GetFileName(path) : path;
 
             try
             {
                 _context.API.CopyToClipboard(toCopy);
-                return true;
+                return ActionResult.Success();
+            }
+            catch(Exception ex)
+            {
+                return ActionResult.Fail($"Failed to copy {(copyNameOnly ? "name" : "path")} to clipboard", ex, mainClassName);
+            }
+        }
+
+        /// <summary>
+        /// Launches the terminal in the specified directory, fallbacks to "cmd.exe" if launching Windows Terminal fails
+        /// </summary>
+        private ActionResult OpenTerminalInDirectory(string workingDirectory)
+        {
+            if(!Directory.Exists(workingDirectory))
+            {
+                return ActionResult.Fail("The selected location no longer exists", null, mainClassName);
+            }
+
+            try
+            {
+                // Try with Windows Terminal first
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "wt.exe",
+                    Arguments = $"-d \"{workingDirectory}\"",
+                    UseShellExecute = true
+                });
+
+                return ActionResult.Success();
             }
             catch
             {
-                _context.API.ShowMsgError("Failed to copy", $"Failed to copy the folder's {(copyNameOnly ? "name" : "full path")} to clipboard");
-                return false;
+                // Fallback to cmd.exe
+                try
+                {
+                    string shellPath = Environment.GetEnvironmentVariable("ComSpec") ?? "cmd.exe";
+
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = shellPath,
+                        WorkingDirectory = workingDirectory,
+                        UseShellExecute = true
+                    });
+
+                    return ActionResult.Success();
+                }
+                catch (Exception ex)
+                {
+                    return ActionResult.Fail("Failed to launch the terminal", ex, mainClassName);
+                }
             }
         }
 
@@ -186,5 +238,10 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 // Silently skip if parsing fails (e.g. the settings file is malformed)
             }
         }
+    }
+
+    internal static class ImagePaths
+    {
+        public const string AppImage = "Images\\app.png";
     }
 }

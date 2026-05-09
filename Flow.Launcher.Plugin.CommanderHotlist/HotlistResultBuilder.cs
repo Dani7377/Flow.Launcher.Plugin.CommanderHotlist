@@ -12,17 +12,21 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             IReadOnlyDictionary<ToolType, string> subtitleTagLookup, 
             bool showSourceTag, IReadOnlyDictionary<ToolType, ToolConfig> toolLookup)
         {
-            string title = showSourceTag ? subtitleTagLookup[entry.ToolType] + " " + entry.Name : entry.Name;
+            string subtitle = showSourceTag ? subtitleTagLookup[entry.ToolType] + " " + entry.Path : entry.Path;
 
             var tool = toolLookup[entry.ToolType];
 
             Result result = new Result
             {
-                Title = title,
-                SubTitle = entry.Path,
-                IcoPath = "Images\\app.png",
+                Title = entry.Name,
+                SubTitle = subtitle,
+                IcoPath = ImagePaths.AppImage,
                 ContextData = (ToolType)tool.ToolType,
-                Action = _ => CommanderLauncher.Launch(entry.Path, tool, context)
+                Action = _ =>
+                {
+                    ActionResult launchToolActionResult = CommanderLauncher.Launch(entry.Path, tool, context);
+                    return ActionResult.HandleActionResult(launchToolActionResult, context);
+                }
             };
 
             // No search term: assign a default score and return

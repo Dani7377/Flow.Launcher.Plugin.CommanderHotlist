@@ -5,27 +5,26 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
 {
     internal static class CommanderLauncher
     {
+        private static string cmdLauncherClassName = nameof(CommanderLauncher);
+
         /// <summary>
         /// Launches the configured file manager with the given target directory with optional arguments.
         /// </summary>
-        public static bool Launch(string targetDirectory, ToolConfig tool, PluginInitContext context)
+        public static ActionResult Launch(string targetDirectory, ToolConfig tool, PluginInitContext context)
         {
             if (string.IsNullOrWhiteSpace(tool.ExecutablePath))
             {
-                context.API.ShowMsg(
-                    $"{tool.DisplayName} not configured",
-                    $"Please configure it in the settings.",
-                    "Images\\app.png");
-                return true;
+                return ActionResult.Fail($"{tool.DisplayName} not configured", null, cmdLauncherClassName);
             }
 
             if (!File.Exists(tool.ExecutablePath))
             {
-                context.API.ShowMsg(
-                    $"{tool.DisplayName} executable not found",
-                    $"Pleae check the configuration in the settings.",
-                    "Images\\app.png");
-                return true;
+                return ActionResult.Fail($"{tool.DisplayName} executable not found", null, cmdLauncherClassName);
+            }
+
+            if(!Directory.Exists(targetDirectory))
+            {
+                return ActionResult.Fail("The selected location does not exist", null, cmdLauncherClassName);
             }
 
             try
@@ -41,16 +40,13 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                     UseShellExecute = true
                 };
                 Process.Start(process);
-            }
-            catch (Exception ex)
-            {
-                context.API.ShowMsg(
-                    "Error Launching Application",
-                    ex.Message,
-                    "Images\\app.png");
-            }
 
-            return true;
+                return ActionResult.Success();
+            }
+            catch(Exception ex)
+            {
+                return ActionResult.Fail($"Error launching {tool.DisplayName}", ex, cmdLauncherClassName);
+            }
         }
     }
 }
