@@ -1,8 +1,8 @@
 {
   "ID": "cecb82f3-6bde-4a1d-b5c6-b4bd3b71d1f1",
-  "ActionKeyword": "dc",
+  "ActionKeyword": "ch",
   "Name": "Commander Hotlist",
-  "Description": "Lists directory hotlist entries from Total/Double Commander",
+  "Description": "Access directory hotlist bookmarks from Total/Double Commander",
   "Author": "Dani7377",
   "Version": "1.0.0",
   "Language": "csharp",
