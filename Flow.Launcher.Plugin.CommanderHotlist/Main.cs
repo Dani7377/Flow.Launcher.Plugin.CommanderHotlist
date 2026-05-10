@@ -242,6 +242,6 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
 
     internal static class ImagePaths
     {
-        public const string AppImage = "Images\\app.png";
+        public const string AppImage = "Images\\icon.png";
     }
 }

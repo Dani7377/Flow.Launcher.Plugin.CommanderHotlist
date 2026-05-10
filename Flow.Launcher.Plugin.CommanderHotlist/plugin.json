@@ -8,5 +8,5 @@
   "Language": "csharp",
   "Website": "https://github.com/Dani7377/Flow.Launcher.Plugin.CommanderHotlist",
   "ExecuteFileName": "Flow.Launcher.Plugin.CommanderHotlist.dll",
-  "IcoPath": "Images\\app.png"
+  "IcoPath": "Images\\icon.png"
 }
