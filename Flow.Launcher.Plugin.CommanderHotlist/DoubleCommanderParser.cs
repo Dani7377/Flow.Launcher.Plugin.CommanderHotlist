@@ -43,7 +43,7 @@ internal class DoubleCommanderParser : IHotlistParser
                 var parents = menuStack.Reverse().ToList();
 
                 yield return new HotlistEntry(
-                    name,
+                    StringUtilities.RemoveMnemonicsFromEntryName(name),
                     path,
                     ToolType.DoubleCommander,
                     parents);

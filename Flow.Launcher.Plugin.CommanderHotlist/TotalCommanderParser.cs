@@ -75,7 +75,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                         var parents = menuStack.Reverse().ToList();
 
                         yield return new HotlistEntry(
-                            pendingName,
+                            StringUtilities.RemoveMnemonicsFromEntryName(pendingName),
                             path,
                             ToolType.TotalCommander,
                             parents);
