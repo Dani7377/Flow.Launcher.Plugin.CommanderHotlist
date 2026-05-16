@@ -8,9 +8,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         /// Creates a <see cref="Result"/> for the given <paramref name="entry"/>.
         /// If <paramref name="searchTerm"/> is provided, the entry is fuzzy-matched against both name and path
         /// </summary>
-        public static Result? Build(HotlistEntry entry, string searchTerm, PluginInitContext context,
-            IReadOnlyDictionary<ToolType, string> subtitleTagLookup, 
-            bool showSourceTag, Settings settings)
+        public static Result? Build(HotlistEntry entry, string searchTerm, PluginInitContext context, Settings settings)
         {
             // Prefix the title (name) with the name of the parent submenu(s) if it's enabled in settings
             string entryNameParentsPrefix = "";
@@ -28,10 +26,6 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             string entryPathWithoutPrefix = entry.Path;
 
             string displayedEntryName = entryNameParentsPrefix + entryNameWithoutPrefix;
-            if(showSourceTag)
-            {
-                displayedEntryName = displayedEntryName.Insert(0, subtitleTagLookup[entry.ToolType] + " ");
-            }
             string displayedEntryPath = entryPathWithoutPrefix;
 
             Result result = new Result
@@ -57,7 +51,6 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
 
             /* Fuzzy-match against both name and path, pick the best score
              * If submenu names are displayed in title (enabled in settings), use "displayedEntryName" to include them in fuzzy search
-             * If source tags are displayed in subtitle, use "entryPathWithoutPrefix", we don't need them to be included in search
              */
             MatchResult nameMatch = context.API.FuzzySearch(searchTerm, displayedEntryName);
             MatchResult pathMatch = context.API.FuzzySearch(searchTerm, entryPathWithoutPrefix);
