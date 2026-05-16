@@ -183,10 +183,9 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         /// </summary>
         private ActionResult OpenTerminalInDirectory(string workingDirectory)
         {
-            if(!Directory.Exists(workingDirectory))
-            {
-                return ActionResult.Fail("The selected location does not exist", null, mainClassName);
-            }
+            /* To prevent bugs and delays when we deal with UNC paths, we won't check if the path exists or not and 
+             * leave the terminal handle it.
+             * Also from my testing, a `Directory.Exists` check on a network path will always return `false` no matter what */
 
             try
             {
