@@ -91,7 +91,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                     {
                         Title = $"Open in {sourceTool.DisplayName}",
                         SubTitle = $"Open the folder in {sourceTool.DisplayName}",
-                        IcoPath = ImagePaths.AppImage,
+                        IcoPath = IconAssets.AppImage,
+                        Glyph = IconAssets.GlyphOpenFolder,
                         Action = _ =>
                         {
                             ActionResult launchSourceToolActionResult = CommanderLauncher.Launch(selectedResult.SubTitle, sourceTool, _context);
@@ -107,7 +108,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                     {
                         Title = $"Open in {tool.DisplayName}",
                         SubTitle = $"Open the folder in {tool.DisplayName}",
-                        IcoPath = ImagePaths.AppImage,
+                        IcoPath = IconAssets.AppImage,
+                        Glyph = IconAssets.GlyphOpenFolder,
                         Action = _ =>
                         {
                             ActionResult launchOtherToolActionResult = CommanderLauncher.Launch(selectedResult.SubTitle, tool, _context);
@@ -123,7 +125,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             {
                 Title = "Copy folder's name",
                 SubTitle = "Copy the name of the folder to clipboard",
-                IcoPath = ImagePaths.AppImage,
+                IcoPath = IconAssets.AppImage,
+                Glyph = IconAssets.GlyphCopy,
                 Action = _ =>
                 {
                     ActionResult copyNameActionResult = Copy(selectedResult.SubTitle, true);
@@ -135,7 +138,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             {
                 Title = "Copy folder's path",
                 SubTitle = "Copy the full path of the folder to clipboard",
-                IcoPath = ImagePaths.AppImage,
+                IcoPath = IconAssets.AppImage,
+                Glyph = IconAssets.GlyphCopy,
                 Action = _ =>
                 {
                     ActionResult copyPathActionResult = Copy(selectedResult.SubTitle, false);
@@ -149,7 +153,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             {
                 Title = "Open in terminal",
                 SubTitle = "Open the folder in the default terminal",
-                IcoPath = ImagePaths.AppImage,
+                IcoPath = IconAssets.AppImage,
+                Glyph = IconAssets.GlyphCommandPrompt,
                 Action = _ =>
                 {
                     ActionResult openTerminalActionResult = OpenTerminalInDirectory(selectedResult.SubTitle);
@@ -239,8 +244,14 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         }
     }
 
-    internal static class ImagePaths
+    internal static class IconAssets
     {
+        private const string GlyphFont = "Segoe Fluent Icons";
+
         public const string AppImage = "Images\\icon.png";
+
+        public static readonly GlyphInfo GlyphCopy = new GlyphInfo(GlyphFont, "\ue8c8");
+        public static readonly GlyphInfo GlyphCommandPrompt = new GlyphInfo(GlyphFont, "\ue756");
+        public static readonly GlyphInfo GlyphOpenFolder = new GlyphInfo(GlyphFont, "\ue838");
     }
 }

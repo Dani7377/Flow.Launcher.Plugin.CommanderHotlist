@@ -38,7 +38,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             {
                 Title = displayedEntryName,
                 SubTitle = displayedEntryPath,
-                IcoPath = ImagePaths.AppImage,
+                IcoPath = IconAssets.AppImage,
                 ContextData = (ToolType)entry.ToolType,
                 Action = _ =>
                 {
