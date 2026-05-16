@@ -170,10 +170,9 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         /// </summary>
         private ActionResult Copy(string path, bool copyNameOnly)
         {
-            string toCopy = copyNameOnly ? Path.GetFileName(path) : path;
-
             try
             {
+                string toCopy = copyNameOnly ? new DirectoryInfo(path).Name : path;
                 _context.API.CopyToClipboard(toCopy);
                 return ActionResult.Success();
             }
