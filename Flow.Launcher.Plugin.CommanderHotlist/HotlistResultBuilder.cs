@@ -28,8 +28,11 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             string entryPathWithoutPrefix = entry.Path;
 
             string displayedEntryName = entryNameParentsPrefix + entryNameWithoutPrefix;
-            string displayedEntryPath = showSourceTag ? 
-                subtitleTagLookup[entry.ToolType] + " " + entryPathWithoutPrefix : entryPathWithoutPrefix;
+            if(showSourceTag)
+            {
+                displayedEntryName = displayedEntryName.Insert(0, subtitleTagLookup[entry.ToolType] + " ");
+            }
+            string displayedEntryPath = entryPathWithoutPrefix;
 
             Result result = new Result
             {
