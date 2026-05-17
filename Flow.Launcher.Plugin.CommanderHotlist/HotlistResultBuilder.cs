@@ -1,4 +1,5 @@
 using Flow.Launcher.Plugin.SharedModels;
+using System.Windows.Media;
 
 namespace Flow.Launcher.Plugin.CommanderHotlist
 {
@@ -8,7 +9,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         /// Creates a <see cref="Result"/> for the given <paramref name="entry"/>.
         /// If <paramref name="searchTerm"/> is provided, the entry is fuzzy-matched against both name and path
         /// </summary>
-        public static Result? Build(HotlistEntry entry, string searchTerm, PluginInitContext context, Settings settings)
+        public static Result? Build(HotlistEntry entry, string searchTerm, PluginInitContext context, Settings settings, Dictionary<ToolType, ImageSource> cachedIcons)
         {
             // Prefix the title (name) with the name of the parent submenu(s) if it's enabled in settings
             string entryNameParentsPrefix = "";
@@ -32,7 +33,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             {
                 Title = displayedEntryName,
                 SubTitle = displayedEntryPath,
-                IcoPath = IconAssets.AppImage,
+                Icon = () => cachedIcons[entry.ToolType],
                 ContextData = (ToolType)entry.ToolType,
                 Action = _ =>
                 {

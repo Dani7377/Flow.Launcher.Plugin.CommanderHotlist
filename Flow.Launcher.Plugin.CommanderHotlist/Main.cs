@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Flow.Launcher.Plugin.CommanderHotlist
 {
@@ -10,6 +12,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         private PluginInitContext _context = null!;
         private Settings _settings = null!;
         private List<ToolConfig>? activeTools;
+        private Dictionary<ToolType, (string exePath, ImageSource icon)> _cachedIcons = new Dictionary<ToolType, (string exePath, ImageSource icon)>();
 
         public void Init(PluginInitContext context)
         {
@@ -34,6 +37,11 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 .Where(t => t.IsEnabled && File.Exists(t.SettingsFilePath))
                 .ToList();
 
+            /* Populate icon cache for each enabled tool. We use caching approach so that we avoid calling the icon extraction `IconExtractor.GetIconFromExe()` directly
+             * in `Result.IconDelegate` (this would lead to calling the extraction logic every time we do a search with our action keyword) */
+            PopulateIconCache();
+            Dictionary<ToolType, ImageSource> resolvedIcons = _cachedIcons.ToDictionary(pair => pair.Key, pair => pair.Value.icon);
+
             // Load bookmarks (hotlist entries) from all enabled tools
             var entries = new List<HotlistEntry>();
             foreach (var tool in activeTools)
@@ -46,7 +54,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             var results = new List<Result>();
             foreach (var entry in entries)
             {
-                var result = HotlistResultBuilder.Build(entry, searchTerm, _context, _settings);
+                var result = HotlistResultBuilder.Build(entry, searchTerm, _context, _settings, resolvedIcons);
                 if (result != null)
                 {
                     results.Add(result);
@@ -219,6 +227,31 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 {
                     return ActionResult.Fail("Failed to launch the terminal", ex, mainClassName);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Extracts and caches the icon for each enabled tool and re-extracts if the tool's executable was reconfigured in settings
+        /// </summary>
+        private void PopulateIconCache()
+        {
+            if (activeTools == null)
+            {
+                return;
+            }
+
+            foreach (ToolConfig tool in activeTools)
+            {
+                // Re-extract if the executable path changed (e.g. user changed it in settings)
+                if (_cachedIcons.TryGetValue(tool.ToolType, out var cached) && cached.exePath == tool.ExecutablePath)
+                {
+                    continue;
+                }
+
+                (ImageSource? icon, ActionResult result) = IconExtractor.GetIconFromExe(tool.ExecutablePath, _context);
+
+                _cachedIcons[tool.ToolType] = (tool.ExecutablePath, icon);
+                ActionResult.HandleActionResult(result, _context);
             }
         }
 
