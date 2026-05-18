@@ -70,7 +70,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Additional Arguments:" VerticalAlignment="Center"
+            <TextBlock Text="Additional Arguments (optional):" VerticalAlignment="Center"
                        Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0"/>
             <TextBox x:Name="TcAdditionalArgs" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1"/>
         </Grid>
@@ -122,7 +122,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Additional Arguments:" VerticalAlignment="Center"
+            <TextBlock Text="Additional Arguments (optional):" VerticalAlignment="Center"
                        Margin="{StaticResource SettingPanelItemRightMargin}" Grid.Column="0"/>
             <TextBox x:Name="DcAdditionalArgs" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1"/>
         </Grid>

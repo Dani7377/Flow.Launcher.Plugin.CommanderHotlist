@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Flow.Launcher.Plugin.CommanderHotlist
 {
@@ -10,6 +12,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         private PluginInitContext _context = null!;
         private Settings _settings = null!;
         private List<ToolConfig>? activeTools;
+        private Dictionary<ToolType, (string exePath, ImageSource icon)> _cachedIcons = new Dictionary<ToolType, (string exePath, ImageSource icon)>();
 
         public void Init(PluginInitContext context)
         {
@@ -34,6 +37,11 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 .Where(t => t.IsEnabled && File.Exists(t.SettingsFilePath))
                 .ToList();
 
+            /* Populate icon cache for each enabled tool. We use caching approach so that we avoid calling the icon extraction `IconExtractor.GetIconFromExe()` directly
+             * in `Result.IconDelegate` (this would lead to calling the extraction logic every time we do a search with our action keyword) */
+            PopulateIconCache();
+            Dictionary<ToolType, ImageSource> resolvedIcons = _cachedIcons.ToDictionary(pair => pair.Key, pair => pair.Value.icon);
+
             // Load bookmarks (hotlist entries) from all enabled tools
             var entries = new List<HotlistEntry>();
             foreach (var tool in activeTools)
@@ -42,15 +50,11 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 ActionResult.HandleActionResult(tryLoadResult, _context);
             }
 
-            // Show source tags like "[TC]" or "[DC]" only if we have more than one tool active, otherwise don't display them
-            var subtitleTagLookup = activeTools.ToDictionary(t => t.ToolType, t => t.SubtitleTag);
-            var showSourceTag = entries.Select(e => e.ToolType).Distinct().Count() > 1;
-
             // Convert entries to Flow Launcher results with fuzzy search
             var results = new List<Result>();
             foreach (var entry in entries)
             {
-                var result = HotlistResultBuilder.Build(entry, searchTerm, _context, subtitleTagLookup, showSourceTag, _settings);
+                var result = HotlistResultBuilder.Build(entry, searchTerm, _context, _settings, resolvedIcons);
                 if (result != null)
                 {
                     results.Add(result);
@@ -91,7 +95,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                     {
                         Title = $"Open in {sourceTool.DisplayName}",
                         SubTitle = $"Open the folder in {sourceTool.DisplayName}",
-                        IcoPath = ImagePaths.AppImage,
+                        IcoPath = IconAssets.AppImage,
+                        Glyph = IconAssets.GlyphOpenFolder,
                         Action = _ =>
                         {
                             ActionResult launchSourceToolActionResult = CommanderLauncher.Launch(selectedResult.SubTitle, sourceTool, _context);
@@ -107,7 +112,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                     {
                         Title = $"Open in {tool.DisplayName}",
                         SubTitle = $"Open the folder in {tool.DisplayName}",
-                        IcoPath = ImagePaths.AppImage,
+                        IcoPath = IconAssets.AppImage,
+                        Glyph = IconAssets.GlyphOpenFolder,
                         Action = _ =>
                         {
                             ActionResult launchOtherToolActionResult = CommanderLauncher.Launch(selectedResult.SubTitle, tool, _context);
@@ -123,7 +129,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             {
                 Title = "Copy folder's name",
                 SubTitle = "Copy the name of the folder to clipboard",
-                IcoPath = ImagePaths.AppImage,
+                IcoPath = IconAssets.AppImage,
+                Glyph = IconAssets.GlyphCopy,
                 Action = _ =>
                 {
                     ActionResult copyNameActionResult = Copy(selectedResult.SubTitle, true);
@@ -135,7 +142,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             {
                 Title = "Copy folder's path",
                 SubTitle = "Copy the full path of the folder to clipboard",
-                IcoPath = ImagePaths.AppImage,
+                IcoPath = IconAssets.AppImage,
+                Glyph = IconAssets.GlyphCopy,
                 Action = _ =>
                 {
                     ActionResult copyPathActionResult = Copy(selectedResult.SubTitle, false);
@@ -149,7 +157,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             {
                 Title = "Open in terminal",
                 SubTitle = "Open the folder in the default terminal",
-                IcoPath = ImagePaths.AppImage,
+                IcoPath = IconAssets.AppImage,
+                Glyph = IconAssets.GlyphCommandPrompt,
                 Action = _ =>
                 {
                     ActionResult openTerminalActionResult = OpenTerminalInDirectory(selectedResult.SubTitle);
@@ -165,10 +174,9 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         /// </summary>
         private ActionResult Copy(string path, bool copyNameOnly)
         {
-            string toCopy = copyNameOnly ? Path.GetFileName(path) : path;
-
             try
             {
+                string toCopy = copyNameOnly ? new DirectoryInfo(path).Name : path;
                 _context.API.CopyToClipboard(toCopy);
                 return ActionResult.Success();
             }
@@ -183,10 +191,9 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         /// </summary>
         private ActionResult OpenTerminalInDirectory(string workingDirectory)
         {
-            if(!Directory.Exists(workingDirectory))
-            {
-                return ActionResult.Fail("The selected location does not exist", null, mainClassName);
-            }
+            /* To prevent bugs and delays when we deal with UNC paths, we won't check if the path exists or not and 
+             * leave the terminal handle it.
+             * Also from my testing, a `Directory.Exists` check on a network path will always return `false` no matter what */
 
             try
             {
@@ -224,6 +231,31 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         }
 
         /// <summary>
+        /// Extracts and caches the icon for each enabled tool and re-extracts if the tool's executable was reconfigured in settings
+        /// </summary>
+        private void PopulateIconCache()
+        {
+            if (activeTools == null)
+            {
+                return;
+            }
+
+            foreach (ToolConfig tool in activeTools)
+            {
+                // Re-extract if the executable path changed (e.g. user changed it in settings)
+                if (_cachedIcons.TryGetValue(tool.ToolType, out var cached) && cached.exePath == tool.ExecutablePath)
+                {
+                    continue;
+                }
+
+                (ImageSource? icon, ActionResult result) = IconExtractor.GetIconFromExe(tool.ExecutablePath, _context);
+
+                _cachedIcons[tool.ToolType] = (tool.ExecutablePath, icon);
+                ActionResult.HandleActionResult(result, _context);
+            }
+        }
+
+        /// <summary>
         /// Attempts to parse the bookmarks and add them to 'target' list.
         /// </summary>
         private ActionResult TryLoad(Func<IEnumerable<HotlistEntry>> parse, List<HotlistEntry> target)
@@ -240,8 +272,14 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         }
     }
 
-    internal static class ImagePaths
+    internal static class IconAssets
     {
+        private const string GlyphFont = "Segoe Fluent Icons";
+
         public const string AppImage = "Images\\icon.png";
+
+        public static readonly GlyphInfo GlyphCopy = new GlyphInfo(GlyphFont, "\ue8c8");
+        public static readonly GlyphInfo GlyphCommandPrompt = new GlyphInfo(GlyphFont, "\ue756");
+        public static readonly GlyphInfo GlyphOpenFolder = new GlyphInfo(GlyphFont, "\ue838");
     }
 }

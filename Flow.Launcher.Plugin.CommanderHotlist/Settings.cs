@@ -37,7 +37,6 @@
                 Parser = new DoubleCommanderParser(),
                 SettingsFileLabel = "DC Settings XML Path:",
                 SettingsFileFilter = "XML files (*.xml)|*.xml|All files (*.*)|*.*",
-                SubtitleTag = "[DC]",
                 ShowSubmenuNames = ShowSubmenuNames
             };
 
@@ -52,7 +51,6 @@
                 Parser = new TotalCommanderParser(),
                 SettingsFileLabel = "TC Settings INI Path:",
                 SettingsFileFilter = "INI files (*.ini)|*.ini|All files (*.*)|*.*",
-                SubtitleTag = "[TC]",
                 ShowSubmenuNames = ShowSubmenuNames
             };
         }
