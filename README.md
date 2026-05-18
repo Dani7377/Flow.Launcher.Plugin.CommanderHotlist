@@ -38,7 +38,7 @@ The plugin fuzzy-matches your search term against both the bookmark name and the
 
 The settings panel lets you configure Total Commander and Double Commander independently.
 
-### Total Commander
+### Total Commander settings
 
 The following settings are available for TC:
 
@@ -55,7 +55,7 @@ These arguments are optional, but I would recommend to use the following togethe
 - `/S` — open the folder in the previously active panel
 - `/T` — open the folder in a new tab
 
-### Double Commander
+### Double Commander settings
 
 In a very similar way, the following settings are available for DC:
 
@@ -71,7 +71,7 @@ Again, these arguments are optional and here I would recommend to use these ones
 - `-C` — use the already running instance (if any instance is running)
 - `-T` — open the folder in a new tab
 
-### General
+### General settings
 
 This section contains settings that apply to all file managers.
 
