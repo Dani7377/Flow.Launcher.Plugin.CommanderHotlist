@@ -37,6 +37,24 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 .Where(t => t.IsEnabled && File.Exists(t.SettingsFilePath))
                 .ToList();
 
+            // No tools configured in settings, show a message as a result
+            if(activeTools.Count == 0)
+            {
+                return new List<Result>
+                {
+                    new Result
+                    {
+                        Title = "No file managers configured.",
+                        SubTitle = "Please configure at least one in the settings.",
+                        Action = _ =>
+                        {
+                            _context.API.OpenSettingDialog();
+                            return true;
+                        }
+                    }
+                };
+            }
+
             /* Populate icon cache for each enabled tool. We use caching approach so that we avoid calling the icon extraction `IconExtractor.GetIconFromExe()` directly
              * in `Result.IconDelegate` (this would lead to calling the extraction logic every time we do a search with our action keyword) */
             PopulateIconCache();
@@ -80,9 +98,14 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         {
             List<Result> r = new List<Result>();
 
+            if (activeTools == null || activeTools.Count == 0)
+            {
+                return r;
+            }
+
             // --- Context menu items for "Open in <tool>" ---
 
-            if (activeTools != null && activeTools.Count > 0)
+            if (activeTools.Count > 0)
             {
                 /* If we have more than one tool enabled in settings (e.g. TC, DC and maybe others in future), we might have mixed bookmarks from each of these in the results
                 We show the "source tool" (the one where the bookmark comes from) first in the context menu, above the other ones */
