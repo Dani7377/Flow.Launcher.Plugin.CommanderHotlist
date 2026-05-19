@@ -2,7 +2,7 @@
 
 A [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher) plugin that syncs your directory hotlist (bookmarks) from Total Commander and Double Commander, so you can access your favorite folders directly from Flow Launcher.
 
-[TODO insert gif here]
+![Usage demo](Docs\demo.gif)
 
 ## Features
 
