@@ -26,7 +26,7 @@ Selecting an item opens that folder in the file manager where the bookmark comes
 - **Copy folder's path** — copies the full folder path to your clipboard
 - **Open in terminal** — opens the folder in the default terminal
 
-[TODO insert image with context menu]
+![Context menu](Docs/context_menu.png)
 
 ### Search behavior
 
@@ -34,7 +34,7 @@ The plugin fuzzy-matches your search term against both the bookmark name and the
 
 ## Settings
 
-[TODO add a screenshot here]
+![Settings view](Docs/settings.png)
 
 The settings panel lets you configure Total Commander and Double Commander independently.
 
