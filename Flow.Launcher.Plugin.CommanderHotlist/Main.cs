@@ -33,9 +33,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             var allTools = _settings.GetTools().ToList();
 
             // Determine which tools are enabled and have a valid settings file
-            activeTools = allTools
-                .Where(t => t.IsEnabled && File.Exists(t.SettingsFilePath))
-                .ToList();
+            activeTools = allTools.Where(t => t.IsEnabled).ToList();
 
             // No tools configured in settings, show a message as a result
             if(activeTools.Count == 0)
@@ -64,8 +62,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             var entries = new List<HotlistEntry>();
             foreach (var tool in activeTools)
             {
-                ActionResult tryLoadResult = TryLoad(() => tool.Parser.Parse(tool.SettingsFilePath), entries);
-                ActionResult.HandleActionResult(tryLoadResult, _context);
+                entries = TryLoad(() => tool.Parser.Parse(tool.SettingsFilePath));
             }
 
             // Convert entries to Flow Launcher results with fuzzy search
@@ -281,17 +278,18 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         /// <summary>
         /// Attempts to parse the bookmarks and add them to 'target' list.
         /// </summary>
-        private ActionResult TryLoad(Func<IEnumerable<HotlistEntry>> parse, List<HotlistEntry> target)
+        private List<HotlistEntry> TryLoad(Func<IEnumerable<HotlistEntry>> parse)
         {
+            List<HotlistEntry> resultEntries = new List<HotlistEntry>();
             try
             {
-                target.AddRange(parse());
-                return ActionResult.Success();
+                resultEntries.AddRange(parse());
             }
-            catch(Exception ex)
+            catch
             {
-                return ActionResult.Fail("Failed to parse the settings file", ex, mainClassName);
+                // We don't really need to show a message to the user here; if the result loading fails somehow, we just don't show them
             }
+            return resultEntries;
         }
     }
 
