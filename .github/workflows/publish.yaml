@@ -10,6 +10,10 @@ on:
 jobs:
   publish:
     runs-on: windows-latest
+
+    permissions:
+        contents: write
+
     steps:
       - uses: actions/checkout@v6
 
@@ -27,17 +31,16 @@ jobs:
 
       - name: Build and Publish .NET App
         run: |
-          dotnet publish -c Release -r win-x64 --self-contained false -o "Flow.Launcher.Plugin.CommanderHotlist"
+          dotnet publish -c Release -r win-x64 --self-contained false -o "publish"
 
       - name: Zip the Plugin Folder
         run: |
-          7z a -tzip "Flow.Launcher.Plugin.CommanderHotlist-${{steps.version.outputs.prop}}.zip" "./Flow.Launcher.Plugin.CommanderHotlist/*"
+          7z a -tzip "Flow.Launcher.Plugin.CommanderHotlist-${{steps.version.outputs.prop}}.zip" "./publish/*"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
           files: "Flow.Launcher.Plugin.CommanderHotlist-*.zip"
           tag_name: "v${{steps.version.outputs.prop}}"
-          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
