@@ -22,7 +22,7 @@ jobs:
         id: version
         uses: notiz-dev/github-action-json-property@release
         with:
-          path: 'plugin.json'
+          path: 'Flow.Launcher.Plugin.CommanderHotlist/plugin.json'
           prop_path: 'Version'
 
       - name: Build and Publish .NET App
