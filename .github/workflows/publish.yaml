@@ -1,0 +1,43 @@
+name: Publish Release
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - .github/workflows/*
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Get Version from JSON
+        id: version
+        uses: notiz-dev/github-action-json-property@release
+        with:
+          path: 'plugin.json'
+          prop_path: 'Version'
+
+      - name: Build and Publish .NET App
+        run: |
+          dotnet publish -c Release -r win-x64 --self-contained false -o "Flow.Launcher.Plugin.CommanderHotlist"
+
+      - name: Zip the Plugin Folder
+        run: |
+          7z a -tzip "Flow.Launcher.Plugin.CommanderHotlist-${{steps.version.outputs.prop}}.zip" "./Flow.Launcher.Plugin.CommanderHotlist/*"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: "Flow.Launcher.Plugin.CommanderHotlist-*.zip"
+          tag_name: "v${{steps.version.outputs.prop}}"
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
