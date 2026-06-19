@@ -28,9 +28,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
 
             try
             {
-                var arguments = string.IsNullOrWhiteSpace(tool.AdditionalArguments)
-                    ? $"\"{targetDirectory}\""
-                    : $"{tool.AdditionalArguments} \"{targetDirectory}\"";
+                var arguments = BuildArguments(tool.AdditionalArguments, targetDirectory);
 
                 var process = new ProcessStartInfo
                 {
@@ -46,6 +44,23 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             {
                 return ActionResult.Fail($"Error launching {tool.DisplayName}", ex, cmdLauncherClassName);
             }
+        }
+
+        private static string BuildArguments(string additionalArguments, string targetDirectory)
+        {
+            if (string.IsNullOrWhiteSpace(additionalArguments))
+            {
+                return $"\"{targetDirectory}\"";
+            }
+
+            const string pathPlaceholder = "{path}";
+
+            if (additionalArguments.Contains(pathPlaceholder))
+            {
+                return additionalArguments.Replace(pathPlaceholder, $"\"{targetDirectory}\"");
+            }
+
+            return $"{additionalArguments} \"{targetDirectory}\"";
         }
     }
 }
