@@ -21,6 +21,10 @@
          * /T = open in new tab */
         public string TcAdditionalArguments { get; set; } = "/O /S /T";
 
+        // --- Launch presets ---
+        public List<LaunchPreset> TcLaunchPresets { get; set; } = new();
+        public List<LaunchPreset> DcLaunchPresets { get; set; } = new();
+
         // --- Global settings (affect all tools) ---
         public bool ShowSubmenuNames { get; set; } = false;
 
@@ -37,7 +41,8 @@
                 Parser = new DoubleCommanderParser(),
                 SettingsFileLabel = "DC Settings XML Path:",
                 SettingsFileFilter = "XML files (*.xml)|*.xml|All files (*.*)|*.*",
-                ShowSubmenuNames = ShowSubmenuNames
+                ShowSubmenuNames = ShowSubmenuNames,
+                LaunchPresets = DcLaunchPresets
             };
 
             yield return new ToolConfig
@@ -51,7 +56,8 @@
                 Parser = new TotalCommanderParser(),
                 SettingsFileLabel = "TC Settings INI Path:",
                 SettingsFileFilter = "INI files (*.ini)|*.ini|All files (*.*)|*.*",
-                ShowSubmenuNames = ShowSubmenuNames
+                ShowSubmenuNames = ShowSubmenuNames,
+                LaunchPresets = TcLaunchPresets
             };
         }
 
@@ -64,12 +70,14 @@
                     DcExecutablePath = tool.ExecutablePath;
                     DcSettingsXmlPath = tool.SettingsFilePath;
                     DcAdditionalArguments = tool.AdditionalArguments;
+                    DcLaunchPresets = tool.LaunchPresets;
                     break;
                 case ToolType.TotalCommander:
                     TcEnabled = tool.IsEnabled;
                     TcExecutablePath = tool.ExecutablePath;
                     TcSettingsIniPath = tool.SettingsFilePath;
                     TcAdditionalArguments = tool.AdditionalArguments;
+                    TcLaunchPresets = tool.LaunchPresets;
                     break;
             }
         }

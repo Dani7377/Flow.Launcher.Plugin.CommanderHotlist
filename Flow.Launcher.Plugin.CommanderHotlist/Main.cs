@@ -112,6 +112,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 ToolConfig? sourceTool = sourceToolType != null ? activeTools.FirstOrDefault(t => t.ToolType == sourceToolType) : null;
 
                 if (sourceTool != null)
+                {
                     r.Add(new Result
                     {
                         Title = $"Open in {sourceTool.DisplayName}",
@@ -124,6 +125,25 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                             return ActionResult.HandleActionResult(launchSourceToolActionResult, _context);
                         }
                     });
+
+                    // Launch presets for the source tool if we have any
+                    foreach (var preset in sourceTool.LaunchPresets)
+                    {
+                        var capturedPreset = preset;
+                        r.Add(new Result
+                        {
+                            Title = GetPresetName(capturedPreset, sourceTool),
+                            SubTitle = GetPresetDescription(capturedPreset, sourceTool),
+                            IcoPath = IconAssets.AppImage,
+                            Glyph = IconAssets.GlyphOpenFolder,
+                            Action = _ =>
+                            {
+                                ActionResult launchSourceToolPresetActionResult = CommanderLauncher.Launch(selectedResult.SubTitle, sourceTool, capturedPreset.Arguments, _context);
+                                return ActionResult.HandleActionResult(launchSourceToolPresetActionResult, _context);
+                            }
+                        });
+                    }
+                }
 
                 // ... and then show the other enabled tools if we have any more
 
@@ -141,6 +161,24 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                             return ActionResult.HandleActionResult(launchOtherToolActionResult, _context);
                         }
                     });
+
+                    // Launch presets for this tool if we have any
+                    foreach (var preset in tool.LaunchPresets)
+                    {
+                        var capturedPreset = preset;
+                        r.Add(new Result
+                        {
+                            Title = GetPresetName(capturedPreset, tool),
+                            SubTitle = GetPresetDescription(capturedPreset, tool),
+                            IcoPath = IconAssets.AppImage,
+                            Glyph = IconAssets.GlyphOpenFolder,
+                            Action = _ =>
+                            {
+                                ActionResult launchOtherToolPresetActionResult = CommanderLauncher.Launch(selectedResult.SubTitle, tool, capturedPreset.Arguments, _context);
+                                return ActionResult.HandleActionResult(launchOtherToolPresetActionResult, _context);
+                            }
+                        });
+                    }
                 }
             }
 
@@ -188,6 +226,33 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             });
 
             return r;
+        }
+
+        /// <summary>
+        /// Returns the display name for a launch preset, or use default "Open in <tool.DisplayName> (<args>)" if empty
+        /// </summary>
+        private static string GetPresetName(LaunchPreset preset, ToolConfig tool)
+        {
+            if (!string.IsNullOrWhiteSpace(preset.Name))
+                return preset.Name;
+
+            string args = preset.Arguments ?? string.Empty;
+            return string.IsNullOrWhiteSpace(args)
+                ? $"Open in {tool.DisplayName}"
+                : $"Open in {tool.DisplayName} ({args})";
+        }
+
+        /// <summary>
+        /// Returns the display description for a launch preset, or use the default "<executableName> <args>" if empty
+        /// </summary>
+        private static string GetPresetDescription(LaunchPreset preset, ToolConfig tool)
+        {
+            if (!string.IsNullOrWhiteSpace(preset.Description))
+                return preset.Description;
+
+            string exeName = Path.GetFileName(tool.ExecutablePath);
+            string args = preset.Arguments ?? string.Empty;
+            return string.IsNullOrWhiteSpace(args) ? exeName : $"{exeName} {args}";
         }
 
         /// <summary>

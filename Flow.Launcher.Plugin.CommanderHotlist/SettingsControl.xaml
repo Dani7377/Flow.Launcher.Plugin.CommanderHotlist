@@ -3,12 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             d:DesignHeight="600"
-             d:DesignWidth="600"
+             d:DesignHeight="750"
+             d:DesignWidth="700"
              mc:Ignorable="d">
 
     <Grid Margin="{StaticResource SettingPanelMargin}" VerticalAlignment="Top" Grid.IsSharedSizeScope="True">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -75,11 +80,56 @@
             <TextBox x:Name="TcAdditionalArgs" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1"/>
         </Grid>
 
-        <Separator Grid.Row="4" Style="{StaticResource SettingPanelSeparatorStyle}"/>
+        <!-- TC Launch Presets -->
+        <TextBlock Text="Launch Presets"
+                   Grid.Row="4"
+                   FontWeight="SemiBold"
+                   Margin="{StaticResource SettingPanelItemRightTopBottomMargin}"/>
+
+        <ListView
+            x:Name="TcPresetsView"
+            Grid.Row="5"
+            Height="auto"
+            Margin="{StaticResource SettingPanelItemTopBottomMargin}"
+            BorderBrush="DarkGray"
+            BorderThickness="1"
+            MouseDoubleClick="TcPresetsView_MouseDoubleClick"
+            SizeChanged="ListView_SizeChanged"
+            SelectionMode="Single">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding DisplayName}" Header="Command Name" Width="160"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding DisplayDescription}" Header="Description" Width="220"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Arguments}" Header="Arguments" Width="220"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <StackPanel Grid.Row="6" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button x:Name="TcPresetAdd" Content="Add" Width="100"
+                    Margin="{StaticResource SettingPanelItemTopBottomMargin}" />
+            <Button x:Name="TcPresetEdit" Content="Edit" Width="100"
+                    Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+                        <Setter Property="IsEnabled" Value="true" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=TcPresetsView, Path=SelectedItems.Count}" Value="0">
+                                <Setter Property="IsEnabled" Value="false" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button x:Name="TcPresetDelete" Content="Delete" Width="100"
+                    Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}" />
+        </StackPanel>
+
+        <Separator Grid.Row="7" Style="{StaticResource SettingPanelSeparatorStyle}"/>
 
         <!-- DOUBLE COMMANDER -->
         <CheckBox x:Name="DcEnabled"
-                  Grid.Row="5"
+                  Grid.Row="8"
                   Margin="{StaticResource SettingPanelItemRightTopBottomMargin}"
                   HorizontalAlignment="Left">
             <TextBlock>
@@ -88,7 +138,7 @@
             </TextBlock>
         </CheckBox>
 
-        <Grid Grid.Row="6" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
+        <Grid Grid.Row="9" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
                 <ColumnDefinition Width="Auto"/>
@@ -102,7 +152,7 @@
                     Margin="{StaticResource SettingPanelItemLeftMargin}" VerticalAlignment="Center" Grid.Column="2"/>
         </Grid>
 
-        <Grid Grid.Row="7" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
+        <Grid Grid.Row="10" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
                 <ColumnDefinition Width="Auto"/>
@@ -116,7 +166,7 @@
                     Margin="{StaticResource SettingPanelItemLeftMargin}" VerticalAlignment="Center" Grid.Column="2"/>
         </Grid>
 
-        <Grid Grid.Row="8" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
+        <Grid Grid.Row="11" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
                 <ColumnDefinition Width="Auto"/>
@@ -127,14 +177,59 @@
             <TextBox x:Name="DcAdditionalArgs" Width="300" Height="23" VerticalAlignment="Center" Grid.Column="1"/>
         </Grid>
 
-        <Separator Grid.Row="9" Style="{StaticResource SettingPanelSeparatorStyle}"/>
+        <!-- DC Launch Presets -->
+        <TextBlock Text="Launch Presets"
+                   Grid.Row="12"
+                   FontWeight="SemiBold"
+                   Margin="{StaticResource SettingPanelItemRightTopBottomMargin}"/>
+
+        <ListView
+            x:Name="DcPresetsView"
+            Grid.Row="13"
+            Height="auto"
+            Margin="{StaticResource SettingPanelItemTopBottomMargin}"
+            BorderBrush="DarkGray"
+            BorderThickness="1"
+            MouseDoubleClick="DcPresetsView_MouseDoubleClick"
+            SizeChanged="ListView_SizeChanged"
+            SelectionMode="Single">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding DisplayName}" Header="Command Name" Width="160"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding DisplayDescription}" Header="Description" Width="220"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Arguments}" Header="Arguments" Width="220"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <StackPanel Grid.Row="14" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button x:Name="DcPresetAdd" Content="Add" Width="100"
+                    Margin="{StaticResource SettingPanelItemTopBottomMargin}" />
+            <Button x:Name="DcPresetEdit" Content="Edit" Width="100"
+                    Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+                        <Setter Property="IsEnabled" Value="true" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=DcPresetsView, Path=SelectedItems.Count}" Value="0">
+                                <Setter Property="IsEnabled" Value="false" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button x:Name="DcPresetDelete" Content="Delete" Width="100"
+                    Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}" />
+        </StackPanel>
+
+        <Separator Grid.Row="15" Style="{StaticResource SettingPanelSeparatorStyle}"/>
 
         <!-- GENERAL -->
         <TextBlock Text="General" FontWeight="SemiBold"
-                   Grid.Row="10" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}"/>
+                   Grid.Row="16" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}"/>
 
         <CheckBox x:Name="ShowSubmenuNames" Content="Show submenu hierarchy in results"
-                  Grid.Row="11" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}"
+                  Grid.Row="17" Margin="{StaticResource SettingPanelItemRightTopBottomMargin}"
                   HorizontalAlignment="Left"/>
     </Grid>
 </UserControl>
