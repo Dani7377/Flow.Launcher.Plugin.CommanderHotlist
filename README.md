@@ -40,6 +40,10 @@ The settings panel lets you configure Total Commander and Double Commander indep
 
 ### Total Commander and Double Commander settings
 
+These settings allow you to configure the file managers independently (their executable location, settings file, launching arguments, etc).
+
+**NOTE**: Most examples in this section are for Double Commander, simply because that's what I use. Total Commander works in the same way, only adjust the arguments.
+
 #### Enable
 
 Turns bookmark syncing on or off for the corresponding file manager, allowing them to be displayed in the results.
@@ -58,18 +62,24 @@ For Double Commander, the settings file is called `doublecmd.xml`. For a normal 
 
 #### Additional Arguments
 
-This field is optional and can be left empty. These are custom arguments that will be used, by default, when opening a bookmark. It supports the `{path}` placeholder that will be replaced by the actual path of the bookmark you selected. If this placeholder is not provided, the path will be appended automatically at the end.
+This field is optional and can be left empty. These are custom arguments that will be used, by default, when opening a bookmark.
+
+You can use the `{path}` placeholder to control where the bookmark's path is inserted. The placeholder is **automatically wrapped in double quotes**. If you don't use this placeholder at all, the bookmark's path will automatically be added at the end (also enclosed in double quotes).
 
 Examples (using DC arguments, assuming your selected bookmark is `C:\Path\To\SelectedBookmark`):
 
-- `-C -T` translates to `-C -T C:\Path\To\SelectedBookmark`
-- `-R {path} -T` translates to `-R C:\Path\To\SelectedBookmark -T`
+| You write | Resulting command |
+|---|---|
+| *(empty)* | `doublecmd.exe "C:\Path\To\SelectedBookmark"` |
+| `-C -T` | `doublecmd.exe -C -T "C:\Path\To\SelectedBookmark"` |
+| `-R {path} -T` | `doublecmd.exe -R "C:\Path\To\SelectedBookmark" -T` |
 
 You can adjust these arguments according to your preferences, but I would recommend using `/O /S /T` for Total Commander and `-C -T` for Double Commander. This will open your selected bookmark in a new tab of a running instance (if any), using the previously active panel. If no instance is running, it will launch a new instance and open it in a new tab, left panel.
 
 #### Launch Presets
 
-This setting allows you to create additional launch presets with different arguments, which will appear as new context menu options.
+This setting allows you to create additional launch presets with different arguments, which will appear as new context menu options. The same `{path}` placeholder works here too, in the same way as described above.
+
 As an example, let's say that you set the **Additional Arguments** field (setting described above) to `-C -T`. But you may sometimes want to open a bookmark and force it to appear in the left (`-L {path}`) or right (`-R {path}`) panel. With **Launch Presets** setting, you can create two additional presets and they will appear in the context menu:
 
 <img src="Docs/launch_presets.png" alt="Launch presets">
