@@ -206,16 +206,14 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             if (listView.SelectedItem is not LaunchPresetDisplay selected)
                 return;
 
-            var source = selected.Source;
-            var presetName = string.IsNullOrWhiteSpace(source.Name) ? "untitled" : source.Name;
             var result = _context.API.ShowMsgBox(
-                $"Are you sure you want to delete \"{presetName}\"?",
+                $"Are you sure you want to delete \"{selected.DisplayName}\"?",
                 "Delete Launch Preset",
                 MessageBoxButton.YesNo);
 
             if (result == MessageBoxResult.Yes)
             {
-                presets.Remove(source);
+                presets.Remove(selected.Source);
                 SavePresets();
             }
         }
@@ -239,7 +237,10 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         private void ListView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             var listView = sender as ListView;
-            var gView = listView.View as GridView;
+            var gView = listView?.View as GridView;
+
+            if (listView == null || gView == null)
+                return;
 
             var workingWidth = listView.ActualWidth - SystemParameters.VerticalScrollBarWidth;
 
