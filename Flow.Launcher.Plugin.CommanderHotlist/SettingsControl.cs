@@ -263,17 +263,14 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             {
                 Source = source;
 
-                // If user did not write a Name, use a default text "Open in <tool.DisplayName> (<args>)"
+                // If user did not write a Name, use a default text "Open in <tool.DisplayName>"
                 if (!string.IsNullOrWhiteSpace(source.Name))
                 {
                     DisplayName = source.Name;
                 }
                 else
                 {
-                    string args = source.Arguments ?? string.Empty;
-                    DisplayName = string.IsNullOrWhiteSpace(args)
-                        ? $"Open in {tool.DisplayName}"
-                        : $"Open in {tool.DisplayName} ({args})";
+                    DisplayName = $"Open in {tool.DisplayName}";
                 }
 
                 // If user did not write a Description, use a default text "<executableName> <args>"
@@ -285,7 +282,15 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                 {
                     string exeName = System.IO.Path.GetFileName(tool.ExecutablePath);
                     string args = source.Arguments ?? string.Empty;
-                    DisplayDescription = string.IsNullOrWhiteSpace(args) ? exeName : $"{exeName} {args}";
+                    if (!string.IsNullOrWhiteSpace(args) && args.Contains("{path}"))
+                    {
+                        DisplayDescription = $"{exeName} {args}";
+                    }
+                    else
+                    {
+                        string argsPart = string.IsNullOrWhiteSpace(args) ? "" : $" {args}";
+                        DisplayDescription = $"{exeName}{argsPart} {{path}}";
+                    }
                 }
             }
         }

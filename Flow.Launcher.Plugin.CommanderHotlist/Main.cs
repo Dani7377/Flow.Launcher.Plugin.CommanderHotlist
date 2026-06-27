@@ -133,7 +133,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                         r.Add(new Result
                         {
                             Title = GetPresetName(capturedPreset, sourceTool),
-                            SubTitle = GetPresetDescription(capturedPreset, sourceTool),
+                            SubTitle = GetPresetDescription(capturedPreset, sourceTool, selectedResult.SubTitle),
                             IcoPath = IconAssets.AppImage,
                             Glyph = IconAssets.GlyphOpenFolder,
                             Action = _ =>
@@ -169,7 +169,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
                         r.Add(new Result
                         {
                             Title = GetPresetName(capturedPreset, tool),
-                            SubTitle = GetPresetDescription(capturedPreset, tool),
+                            SubTitle = GetPresetDescription(capturedPreset, tool, selectedResult.SubTitle),
                             IcoPath = IconAssets.AppImage,
                             Glyph = IconAssets.GlyphOpenFolder,
                             Action = _ =>
@@ -229,30 +229,42 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
         }
 
         /// <summary>
-        /// Returns the display name for a launch preset, or use default "Open in <tool.DisplayName> (<args>)" if empty
+        /// Returns the display name for a launch preset, or use default "Open in <tool.DisplayName>" if empty
         /// </summary>
         private static string GetPresetName(LaunchPreset preset, ToolConfig tool)
         {
             if (!string.IsNullOrWhiteSpace(preset.Name))
                 return preset.Name;
 
-            string args = preset.Arguments ?? string.Empty;
-            return string.IsNullOrWhiteSpace(args)
-                ? $"Open in {tool.DisplayName}"
-                : $"Open in {tool.DisplayName} ({args})";
+            return $"Open in {tool.DisplayName}";
         }
 
         /// <summary>
         /// Returns the display description for a launch preset, or use the default "<executableName> <args>" if empty
         /// </summary>
-        private static string GetPresetDescription(LaunchPreset preset, ToolConfig tool)
+        private static string GetPresetDescription(LaunchPreset preset, ToolConfig tool, string? resolvedPath = null)
         {
             if (!string.IsNullOrWhiteSpace(preset.Description))
-                return preset.Description;
+                return resolvedPath is not null
+                    ? preset.Description.Replace("{path}", $"\"{resolvedPath}\"")
+                    : preset.Description;
 
             string exeName = Path.GetFileName(tool.ExecutablePath);
             string args = preset.Arguments ?? string.Empty;
-            return string.IsNullOrWhiteSpace(args) ? exeName : $"{exeName} {args}";
+
+            if (!string.IsNullOrWhiteSpace(args) && args.Contains("{path}"))
+            {
+                string description = $"{exeName} {args}";
+                return resolvedPath is not null
+                    ? description.Replace("{path}", $"\"{resolvedPath}\"")
+                    : description;
+            }
+
+            string argsPart = string.IsNullOrWhiteSpace(args) ? "" : $" {args}";
+            string descriptionWithPath = $"{exeName}{argsPart} {{path}}";
+            return resolvedPath is not null
+                ? descriptionWithPath.Replace("{path}", $"\"{resolvedPath}\"")
+                : descriptionWithPath;
         }
 
         /// <summary>
