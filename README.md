@@ -58,12 +58,12 @@ For Double Commander, the settings file is called `doublecmd.xml`. For a normal 
 
 #### Additional Arguments
 
-This field is optional and can be left empty. These are custom arguments that will be used, by default, when opening a folder. It supports the `{path}` placeholder that will be replaced by the actual path you select. If this placeholder is not provided, the path will be appended automatically at the end.
+This field is optional and can be left empty. These are custom arguments that will be used, by default, when opening a bookmark. It supports the `{path}` placeholder that will be replaced by the actual path of the bookmark you selected. If this placeholder is not provided, the path will be appended automatically at the end.
 
-Examples (using DC arguments, assuming your selected bookmark is `C:\Path\To\SelectedResult`):
+Examples (using DC arguments, assuming your selected bookmark is `C:\Path\To\SelectedBookmark`):
 
-- `-C -T` translates to `-C -T C:\Path\To\SelectedResult`
-- `-R {path} -T` translates to `-R C:\Path\To\SelectedResult -T`
+- `-C -T` translates to `-C -T C:\Path\To\SelectedBookmark`
+- `-R {path} -T` translates to `-R C:\Path\To\SelectedBookmark -T`
 
 You can adjust these arguments according to your preferences, but I would recommend using `/O /S /T` for Total Commander and `-C -T` for Double Commander. This will open your selected bookmark in a new tab of a running instance (if any), using the previously active panel. If no instance is running, it will launch a new instance and open it in a new tab, left panel.
 
