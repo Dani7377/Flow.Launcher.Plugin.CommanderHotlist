@@ -26,7 +26,7 @@ Selecting an item opens that folder in the file manager where the bookmark comes
 - **Copy folder's path** — copies the full folder path to your clipboard
 - **Open in terminal** — opens the folder in the default terminal
 
-<img src="Docs/context_menu.png" alt="Context menu" width="40%">
+<img src="Docs/context_menu.png" alt="Context menu">
 
 ### Search behavior
 
@@ -34,7 +34,7 @@ The plugin fuzzy-matches your search term against both the bookmark name and the
 
 ## Settings
 
-<img src="Docs/settings.png" alt="Settings view" width="65%">
+<img src="Docs/settings.png" alt="Settings view">
 
 The settings panel lets you configure Total Commander and Double Commander independently, as well as general settings that affect both of them.
 
@@ -72,11 +72,11 @@ You can adjust these arguments according to your preferences, but I would recomm
 This setting allows you to create additional launch presets with different arguments, which will appear as new context menu options.
 As an example, let's say that you set the **Additional Arguments** field (setting described above) to `-C -T`. But you may sometimes want to open a bookmark and force it to appear in the left (`-L {path}`) or right (`-R {path}`) panel. With **Launch Presets** setting, you can create two additional presets and they will appear in the context menu:
 
-<img src="Docs/launch_presets.png" alt="Launch presets" width="65%">
+<img src="Docs/launch_presets.png" alt="Launch presets">
 
 <br>
 
-<img src="Docs/launch_presets_context_menu.png" alt="Launch presets in context menu" width="65%">
+<img src="Docs/launch_presets_context_menu.png" alt="Launch presets in context menu">
 
 ### General settings
 
