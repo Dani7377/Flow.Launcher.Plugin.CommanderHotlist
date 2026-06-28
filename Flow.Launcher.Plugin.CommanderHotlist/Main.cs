@@ -62,7 +62,8 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             var entries = new List<HotlistEntry>();
             foreach (var tool in activeTools)
             {
-                entries = TryLoad(() => tool.Parser.Parse(tool.SettingsFilePath));
+                var toolEntries = TryLoad(() => tool.Parser.Parse(tool.SettingsFilePath));
+                entries.AddRange(toolEntries);
             }
 
             // Convert entries to Flow Launcher results with fuzzy search
