@@ -16,9 +16,10 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             @"^cmd\d+=(?:cd\s+)?(.*)$",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        public IEnumerable<HotlistEntry> Parse(string filePath)
+        public IEnumerable<HotlistEntry> Parse(HotlistSource source)
         {
-            var iniLines = File.ReadAllLines(filePath);
+            var dirMenuFile = TotalCommanderIniResolver.ResolveDirMenuFile(source.ConfigFilePath, source.ExecutablePath);
+            var iniLines = File.ReadAllLines(dirMenuFile);
             var inDirMenu = false;
             string? pendingName = null;
 
