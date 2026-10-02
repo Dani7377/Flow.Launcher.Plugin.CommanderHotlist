@@ -60,6 +60,17 @@ For Total Commander, this file is `wincmd.ini`. For a normal installation, this 
 
 For Double Commander, the settings file is called `doublecmd.xml`. For a normal installation, you'll usually find it in `C:\Users\<username>\AppData\Roaming\doublecmd`, while in case of portable installation, you can find this file in the DC `settings` folder.
 
+#### Total Commander configuration redirection (`RedirectSection` and `AlternateUserIni`)
+
+Total Commander can split its configuration across more than one INI files. The plugin follows these directives automatically, so you only need to point the **Settings INI Path** at your main `wincmd.ini`:
+
+- **`AlternateUserIni`** (in the `[Configuration]` section) — when set, `[DirMenu]` is by default redirected to that file.
+- **`RedirectSection`** (inside the `[DirMenu]` section) — takes priority over the global redirect in case `AlternateUserIni` exists too. A value of `0` keeps the bookmarks in the main `wincmd.ini`, `1` routes them to the `AlternateUserIni` file, and any other value is treated as an explicit file path.
+
+Redirected paths may use Windows environment variables (e.g. `%APPDATA%`) as well as Total Commander's `%COMMANDER_PATH%` variable, and may be relative to the folder containing your main `wincmd.ini`. `%COMMANDER_PATH%` is resolved from the folder of the configured **Executable Path**, falling back to the `COMMANDER_PATH` environment variable.
+
+**Note:** This redirection is specific to Total Commander only. As far as I know, Double Commander does not have an equivalent redirect mechanism.
+
 #### Additional Arguments
 
 This field is optional and can be left empty. These are custom arguments that will be used, by default, when opening a bookmark.

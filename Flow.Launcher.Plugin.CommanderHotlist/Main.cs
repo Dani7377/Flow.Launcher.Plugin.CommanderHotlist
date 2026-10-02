@@ -62,7 +62,7 @@ namespace Flow.Launcher.Plugin.CommanderHotlist
             var entries = new List<HotlistEntry>();
             foreach (var tool in activeTools)
             {
-                var toolEntries = TryLoad(() => tool.Parser.Parse(tool.SettingsFilePath));
+                var toolEntries = TryLoad(() => tool.Parser.Parse(new HotlistSource(tool.SettingsFilePath, tool.ExecutablePath)));
                 entries.AddRange(toolEntries);
             }
 

@@ -5,9 +5,9 @@ using System.Xml.Linq;
 
 internal class DoubleCommanderParser : IHotlistParser
 {
-    public IEnumerable<HotlistEntry> Parse(string filePath)
+    public IEnumerable<HotlistEntry> Parse(HotlistSource source)
     {
-        var doc = XDocument.Load(filePath);
+        var doc = XDocument.Load(source.ConfigFilePath);
         var menuStack = new Stack<string>();
 
         foreach (var hotDir in doc.Descendants("HotDir"))
